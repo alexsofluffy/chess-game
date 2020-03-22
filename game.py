@@ -11,6 +11,44 @@ class Chess:
         self.turn = 'w'
         self.state = 'UNFINISHED'
 
+    def is_in_check(self, player):
+        """Checks whether or not the specified player is in check."""
+        if player == 'w':
+            for row in range(8):
+                for col in range(8):
+                    test_piece = self.board[row][col]
+                    if test_piece != '_':
+                        if isinstance(test_piece, King) is True and \
+                                test_piece.color == 'w':
+                            king_pos = [test_piece.row, test_piece.col]
+            for row2 in range(8):
+                for col2 in range(8):
+                    test_piece2 = self.board[row2][col2]
+                    if test_piece2 != '_':
+                        if test_piece2.color == 'b':
+                            if test_piece2.is_move_valid(king_pos[0],
+                                                         king_pos[1],
+                                                         self.board) is True:
+                                return True
+        if player == 'b':
+            for row in range(8):
+                for col in range(8):
+                    test_piece = self.board[row][col]
+                    if test_piece != '_':
+                        if isinstance(test_piece, King) is True and \
+                                test_piece.color == 'b':
+                            king_pos = [test_piece.row, test_piece.col]
+            for row2 in range(8):
+                for col2 in range(8):
+                    test_piece2 = self.board[row2][col2]
+                    if test_piece2 != '_':
+                        if test_piece2.color == 'w':
+                            if test_piece2.is_move_valid(king_pos[0],
+                                                         king_pos[1],
+                                                         self.board) is True:
+                                return True
+            return False
+
     def move(self, row, col, new_row, new_col):
         """Moves specified piece to the specified location on board if valid.
 
@@ -64,11 +102,45 @@ class Chess:
         piece.row = new_row
         piece.col = new_col
 
-        return True
+        # Reverses move and returns False if move puts own king in check.
+        if self.turn == 'w':
+            if self.is_in_check('w') is True:
+                self.board[new_row][new_col] = taken_piece
+                self.board[row][col] = piece
+                piece.row = row
+                piece.col = col
+                return False
+        if self.turn == 'b':
+            if self.is_in_check('b') is True:
+                self.board[new_row][new_col] = taken_piece
+                self.board[row][col] = piece
+                piece.row = row
+                piece.col = col
+                return False
 
+        # Updates the turn tracker.
+        if self.turn == 'w':
+            self.turn = 'b'
+        else:
+            self.turn = 'w'
+        return True
 
 
 a = Chess()
 a.game_board.print_board()
-print(a.move(6, 3, 3, 3))
+print(a.move(6, 3, 4, 3))
+a.game_board.print_board()
+print(a.move(1, 3, 3, 3))
+a.game_board.print_board()
+print(a.move(7, 2, 3, 6))
+a.game_board.print_board()
+print(a.move(0, 3, 2, 3))
+a.game_board.print_board()
+print(a.move(6, 4, 5, 4))
+a.game_board.print_board()
+print(a.move(0, 4, 0, 3))
+a.game_board.print_board()
+print(a.move(6, 6, 4, 6))
+a.game_board.print_board()
+print(a.move(1, 4, 2, 4))
 a.game_board.print_board()
