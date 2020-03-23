@@ -44,8 +44,8 @@ class Chess:
                             return True
         return False
 
-    def is_in_checkmate(self, player):
-        """Checks whether or not the specified player is in checkmate."""
+    def is_in_mate(self, player):
+        """Checks whether the specified player is in checkmate or stalemate."""
         if player == 'w':
             for row in range(8):
                 for col in range(8):
@@ -158,8 +158,11 @@ class Chess:
                 piece.col = col
                 return False
             if self.is_in_check('b') is True:
-                if self.is_in_checkmate('b') is True:
+                if self.is_in_mate('b') is True:
                     self.state = 'WHITE_WON'
+            else:
+                if self.is_in_mate('b') is True:
+                    self.state = 'DRAW'
         if self.turn == 'b':
             if self.is_in_check('b') is True:
                 self.board[new_row][new_col] = taken_piece
@@ -168,8 +171,11 @@ class Chess:
                 piece.col = col
                 return False
             if self.is_in_check('w') is True:
-                if self.is_in_checkmate('w') is True:
+                if self.is_in_mate('w') is True:
                     self.state = 'BLACK_WON'
+            else:
+                if self.is_in_mate('w') is True:
+                    self.state = 'DRAW'
 
         # Updates the turn tracker.
         if self.turn == 'w':
@@ -183,38 +189,38 @@ a = Chess()
 a.game_board.print_board()
 print(a.move(7, 4, 7, 5))
 a.game_board.print_board()
-print(a.move(1, 4, 2, 4))
+print(a.move(0, 3, 6, 3))
 a.game_board.print_board()
 print(a.move(7, 5, 7, 6))
 a.game_board.print_board()
-print(a.move(0, 3, 2, 5))
+print(a.move(0, 4, 1, 4))
 a.game_board.print_board()
 print(a.move(7, 6, 7, 7))
 a.game_board.print_board()
-print(a.move(2, 5, 4, 7))
+print(a.move(1, 4, 2, 4))
 a.game_board.print_board()
-print(a.move(7, 7, 6, 6))
-a.game_board.print_board()
-print(a.move(1, 3, 3, 3))
-a.game_board.print_board()
-print(a.move(6, 6, 7, 6))
+print(a.move(7, 7, 7, 6))
 a.game_board.print_board()
 print(a.move(2, 4, 3, 4))
 a.game_board.print_board()
-print(a.move(7, 6, 6, 6))
-a.game_board.print_board()
-print(a.move(0, 2, 5, 7))
-a.game_board.print_board()
-print(a.move(6, 6, 7, 7))
+print(a.move(7, 6, 7, 7))
 a.game_board.print_board()
 print(a.move(3, 4, 4, 4))
 a.game_board.print_board()
-print(a.move(7, 7, 6, 7))
+print(a.move(7, 7, 7, 6))
 a.game_board.print_board()
-print(a.move(4, 7, 5, 6))
+print(a.move(4, 4, 4, 5))
 a.game_board.print_board()
-print(a.move(6, 7, 7, 7))
+print(a.move(7, 6, 7, 7))
 a.game_board.print_board()
-print(a.move(5, 6, 6, 6))
+print(a.move(4, 5, 5, 6))
+a.game_board.print_board()
+print(a.move(7, 7, 7, 6))
+a.game_board.print_board()
+print(a.move(6, 3, 6, 4))
+a.game_board.print_board()
+print(a.move(7, 6, 7, 7))
+a.game_board.print_board()
+print(a.move(6, 4, 6, 5))
 a.game_board.print_board()
 print(a.state)

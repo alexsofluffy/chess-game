@@ -25,6 +25,7 @@ class Board:
         # 'n', which represent the knight pieces. White pieces start on the
         # bottom of the board (rank 8) and black pieces start on the top of the
         # board (rank 1) by default.
+        """
         self.board[1][0] = Pawn(1, 0, 'b')
         self.board[1][1] = Pawn(1, 1, 'b')
         self.board[1][2] = Pawn(1, 2, 'b')
@@ -39,6 +40,7 @@ class Board:
         self.board[0][6] = Knight(0, 6, 'b')
         self.board[0][2] = Bishop(0, 2, 'b')
         self.board[0][5] = Bishop(0, 5, 'b')
+        """
         self.board[0][3] = Queen(0, 3, 'b')
         self.board[0][4] = King(0, 4, 'b')
 
