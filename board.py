@@ -42,6 +42,7 @@ class Board:
         self.board[0][3] = Queen(0, 3, 'b')
         self.board[0][4] = King(0, 4, 'b')
 
+        """
         self.board[6][0] = Pawn(6, 0, 'w')
         self.board[6][1] = Pawn(6, 1, 'w')
         self.board[6][2] = Pawn(6, 2, 'w')
@@ -57,6 +58,7 @@ class Board:
         self.board[7][2] = Bishop(7, 2, 'w')
         self.board[7][5] = Bishop(7, 5, 'w')
         self.board[7][3] = Queen(7, 3, 'w')
+        """
         self.board[7][4] = King(7, 4, 'w')
 
     def print_board(self):

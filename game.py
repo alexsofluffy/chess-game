@@ -13,41 +13,90 @@ class Chess:
 
     def is_in_check(self, player):
         """Checks whether or not the specified player is in check."""
+        king_pos = []
         if player == 'w':
             for row in range(8):
                 for col in range(8):
-                    test_piece = self.board[row][col]
-                    if test_piece != '_':
-                        if isinstance(test_piece, King) is True and \
-                                test_piece.color == 'w':
-                            king_pos = [test_piece.row, test_piece.col]
-            for row2 in range(8):
-                for col2 in range(8):
-                    test_piece2 = self.board[row2][col2]
-                    if test_piece2 != '_':
-                        if test_piece2.color == 'b':
-                            if test_piece2.is_move_valid(king_pos[0],
-                                                         king_pos[1],
-                                                         self.board) is True:
-                                return True
+                    piece = self.board[row][col]
+                    if isinstance(piece, King) is True and piece.color == 'w':
+                        king_pos.append(row)
+                        king_pos.append(col)
+            for row in range(8):
+                for col in range(8):
+                    piece = self.board[row][col]
+                    if piece != '_' and piece.color == 'b':
+                        if piece.is_move_valid(king_pos[0], king_pos[1],
+                                               self.board) is True:
+                            return True
         if player == 'b':
             for row in range(8):
                 for col in range(8):
-                    test_piece = self.board[row][col]
-                    if test_piece != '_':
-                        if isinstance(test_piece, King) is True and \
-                                test_piece.color == 'b':
-                            king_pos = [test_piece.row, test_piece.col]
-            for row2 in range(8):
-                for col2 in range(8):
-                    test_piece2 = self.board[row2][col2]
-                    if test_piece2 != '_':
-                        if test_piece2.color == 'w':
-                            if test_piece2.is_move_valid(king_pos[0],
-                                                         king_pos[1],
-                                                         self.board) is True:
-                                return True
-            return False
+                    piece = self.board[row][col]
+                    if isinstance(piece, King) is True and piece.color == 'b':
+                        king_pos.append(row)
+                        king_pos.append(col)
+            for row in range(8):
+                for col in range(8):
+                    piece = self.board[row][col]
+                    if piece != '_' and piece.color == 'w':
+                        if piece.is_move_valid(king_pos[0], king_pos[1],
+                                               self.board) is True:
+                            return True
+        return False
+
+    def is_in_checkmate(self, player):
+        """Checks whether or not the specified player is in checkmate."""
+        if player == 'w':
+            for row in range(8):
+                for col in range(8):
+                    piece = self.board[row][col]
+                    if piece != '_' and piece.color == 'w':
+                        for row2 in range(8):
+                            for col2 in range(8):
+                                taken_piece = self.board[row2][col2]
+                                if piece.is_move_valid(row2, col2,
+                                                       self.board) is True:
+                                    self.board[row2][col2] = piece
+                                    self.board[row][col] = '_'
+                                    piece.row = row2
+                                    piece.col = col2
+                                    if self.is_in_check('w') is False:
+                                        self.board[row2][col2] = taken_piece
+                                        self.board[row][col] = piece
+                                        piece.row = row
+                                        piece.col = col
+                                        return False
+                                    else:
+                                        self.board[row2][col2] = taken_piece
+                                        self.board[row][col] = piece
+                                        piece.row = row
+                                        piece.col = col
+        if player == 'b':
+            for row in range(8):
+                for col in range(8):
+                    piece = self.board[row][col]
+                    if piece != '_' and piece.color == 'b':
+                        for row2 in range(8):
+                            for col2 in range(8):
+                                taken_piece = self.board[row2][col2]
+                                if piece.is_move_valid(row2, col2,
+                                                       self.board) is True:
+                                    self.board[row2][col2] = piece
+                                    self.board[row][col] = '_'
+                                    piece.row = row2
+                                    piece.col = col2
+                                    if self.is_in_check('b') is False:
+                                        self.board[row2][col2] = taken_piece
+                                        self.board[row][col] = piece
+                                        piece.row = row
+                                        piece.col = col
+                                        return False
+                                    else:
+                                        self.board[row2][col2] = taken_piece
+                                        self.board[row][col] = piece
+                                        piece.row = row
+                                        piece.col = col
+        return True
 
     def move(self, row, col, new_row, new_col):
         """Moves specified piece to the specified location on board if valid.
@@ -69,10 +118,6 @@ class Chess:
 
         # Returns False if starting position contains no piece to move.
         if self.board[row][col] == '_':
-            return False
-
-        # Returns False if starting and ending positions are the same.
-        if new_row == row and new_col == col:
             return False
 
         # Returns False if player tries to move opponent's piece or capture one
@@ -103,6 +148,8 @@ class Chess:
         piece.col = new_col
 
         # Reverses move and returns False if move puts own king in check.
+        # Updates the is_in_check status of the opponent if move places their
+        # king in check.
         if self.turn == 'w':
             if self.is_in_check('w') is True:
                 self.board[new_row][new_col] = taken_piece
@@ -110,6 +157,9 @@ class Chess:
                 piece.row = row
                 piece.col = col
                 return False
+            if self.is_in_check('b') is True:
+                if self.is_in_checkmate('b') is True:
+                    self.state = 'WHITE_WON'
         if self.turn == 'b':
             if self.is_in_check('b') is True:
                 self.board[new_row][new_col] = taken_piece
@@ -117,6 +167,9 @@ class Chess:
                 piece.row = row
                 piece.col = col
                 return False
+            if self.is_in_check('w') is True:
+                if self.is_in_checkmate('w') is True:
+                    self.state = 'BLACK_WON'
 
         # Updates the turn tracker.
         if self.turn == 'w':
@@ -128,19 +181,40 @@ class Chess:
 
 a = Chess()
 a.game_board.print_board()
-print(a.move(6, 3, 4, 3))
-a.game_board.print_board()
-print(a.move(1, 3, 3, 3))
-a.game_board.print_board()
-print(a.move(7, 2, 3, 6))
-a.game_board.print_board()
-print(a.move(0, 3, 2, 3))
-a.game_board.print_board()
-print(a.move(6, 4, 5, 4))
-a.game_board.print_board()
-print(a.move(0, 4, 0, 3))
-a.game_board.print_board()
-print(a.move(6, 6, 4, 6))
+print(a.move(7, 4, 7, 5))
 a.game_board.print_board()
 print(a.move(1, 4, 2, 4))
 a.game_board.print_board()
+print(a.move(7, 5, 7, 6))
+a.game_board.print_board()
+print(a.move(0, 3, 2, 5))
+a.game_board.print_board()
+print(a.move(7, 6, 7, 7))
+a.game_board.print_board()
+print(a.move(2, 5, 4, 7))
+a.game_board.print_board()
+print(a.move(7, 7, 6, 6))
+a.game_board.print_board()
+print(a.move(1, 3, 3, 3))
+a.game_board.print_board()
+print(a.move(6, 6, 7, 6))
+a.game_board.print_board()
+print(a.move(2, 4, 3, 4))
+a.game_board.print_board()
+print(a.move(7, 6, 6, 6))
+a.game_board.print_board()
+print(a.move(0, 2, 5, 7))
+a.game_board.print_board()
+print(a.move(6, 6, 7, 7))
+a.game_board.print_board()
+print(a.move(3, 4, 4, 4))
+a.game_board.print_board()
+print(a.move(7, 7, 6, 7))
+a.game_board.print_board()
+print(a.move(4, 7, 5, 6))
+a.game_board.print_board()
+print(a.move(6, 7, 7, 7))
+a.game_board.print_board()
+print(a.move(5, 6, 6, 6))
+a.game_board.print_board()
+print(a.state)

@@ -29,6 +29,8 @@ class Pawn(Piece):
         new_col -- the column on the game board that piece is trying to move to
         board -- the game board that piece is currently on
         """
+        if new_row == self.row and new_col == self.col:
+            return False
         if self.color == 'w':  # Need to implement en passant.
             if new_row >= self.row:
                 return False
@@ -95,6 +97,8 @@ class Rook(Piece):
         new_col -- the column on the game board that piece is trying to move to
         board -- the game board that piece is currently on
         """
+        if new_row == self.row and new_col == self.col:
+            return False
         if new_row != self.row and new_col != self.col:  # Need to add castling
             return False
         else:
@@ -134,6 +138,8 @@ class Knight(Piece):
         new_col -- the column on the game board that piece is trying to move to
         board -- the game board that piece is currently on
         """
+        if new_row == self.row and new_col == self.col:
+            return False
         if new_row == self.row or new_col == self.col:
             return False
         else:
@@ -189,6 +195,8 @@ class Bishop(Piece):
         new_col -- the column on the game board that piece is trying to move to
         board -- the game board that piece is currently on
         """
+        if new_row == self.row and new_col == self.col:
+            return False
         if new_row == self.row or new_col == self.col:
             return False
         else:
@@ -256,6 +264,8 @@ class Queen(Piece):
         new_col -- the column on the game board that piece is trying to move to
         board -- the game board that piece is currently on
         """
+        if new_row == self.row and new_col == self.col:
+            return False
         if new_row < self.row and new_col != self.col:
             if new_col < self.col:
                 if self.col - new_col != self.row - new_row:
@@ -338,6 +348,8 @@ class King(Piece):
         new_col -- the column on the game board that piece is trying to move to
         board -- the game board that piece is currently on
         """
+        if new_row == self.row and new_col == self.col:
+            return False
         if new_row - self.row in range(-1, 2) and \
                 new_col - self.col in range(-1, 2):
             return True
