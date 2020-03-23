@@ -31,7 +31,7 @@ class Pawn(Piece):
         """
         if new_row == self.row and new_col == self.col:
             return False
-        if self.color == 'w':  # Need to implement en passant.
+        if self.color == 'w':  # Need to implement en passant, promotion.
             if new_row >= self.row:
                 return False
             if new_col == self.col:

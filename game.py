@@ -157,6 +157,29 @@ class Chess:
                 piece.row = row
                 piece.col = col
                 return False
+            if isinstance(piece, Pawn) is True:
+                if new_row == 0 or new_row == 7:
+                    while True:
+                        new_piece = input(
+                            'What piece would you like to promote to? ')
+                        if new_piece == 'queen' or new_piece == 'Queen':
+                            self.board[new_row][new_col] = Queen(new_row,
+                                                                 new_col, 'w')
+                            break
+                        if new_piece == 'rook' or new_piece == 'Rook':
+                            self.board[new_row][new_col] = Rook(new_row,
+                                                                new_col, 'w')
+                            break
+                        if new_piece == 'bishop' or new_piece == 'Bishop':
+                            self.board[new_row][new_col] = Bishop(new_row,
+                                                                  new_col, 'w')
+                            break
+                        if new_piece == 'knight' or new_piece == 'Knight':
+                            self.board[new_row][new_col] = Knight(new_row,
+                                                                  new_col, 'w')
+                            break
+                        else:
+                            print('That is an invalid piece. Try again.')
             if self.is_in_check('b') is True:
                 if self.is_in_mate('b') is True:
                     self.state = 'WHITE_WON'
@@ -170,6 +193,29 @@ class Chess:
                 piece.row = row
                 piece.col = col
                 return False
+            if isinstance(piece, Pawn) is True:
+                if new_row == 0 or new_row == 7:
+                    while True:
+                        new_piece = input(
+                            'What piece would you like to promote to? ')
+                        if new_piece == 'queen' or new_piece == 'Queen':
+                            self.board[new_row][new_col] = Queen(new_row,
+                                                                 new_col, 'b')
+                            break
+                        if new_piece == 'rook' or new_piece == 'Rook':
+                            self.board[new_row][new_col] = Rook(new_row,
+                                                                new_col, 'b')
+                            break
+                        if new_piece == 'bishop' or new_piece == 'Bishop':
+                            self.board[new_row][new_col] = Bishop(new_row,
+                                                                  new_col, 'b')
+                            break
+                        if new_piece == 'knight' or new_piece == 'Knight':
+                            self.board[new_row][new_col] = Knight(new_row,
+                                                                  new_col, 'b')
+                            break
+                        else:
+                            print('That is an invalid piece. Try again.')
             if self.is_in_check('w') is True:
                 if self.is_in_mate('w') is True:
                     self.state = 'BLACK_WON'
@@ -187,40 +233,22 @@ class Chess:
 
 a = Chess()
 a.game_board.print_board()
-print(a.move(7, 4, 7, 5))
+print(a.move(6, 2, 4, 2))
 a.game_board.print_board()
-print(a.move(0, 3, 6, 3))
+print(a.move(0, 4, 0, 5))
 a.game_board.print_board()
-print(a.move(7, 5, 7, 6))
+print(a.move(4, 2, 3, 2))
 a.game_board.print_board()
-print(a.move(0, 4, 1, 4))
+print(a.move(0, 5, 0, 6))
 a.game_board.print_board()
-print(a.move(7, 6, 7, 7))
+print(a.move(3, 2, 2, 2))
 a.game_board.print_board()
-print(a.move(1, 4, 2, 4))
+print(a.move(0, 6, 0, 7))
 a.game_board.print_board()
-print(a.move(7, 7, 7, 6))
+print(a.move(2, 2, 1, 2))
 a.game_board.print_board()
-print(a.move(2, 4, 3, 4))
+print(a.move(0, 7, 0, 6))
 a.game_board.print_board()
-print(a.move(7, 6, 7, 7))
-a.game_board.print_board()
-print(a.move(3, 4, 4, 4))
-a.game_board.print_board()
-print(a.move(7, 7, 7, 6))
-a.game_board.print_board()
-print(a.move(4, 4, 4, 5))
-a.game_board.print_board()
-print(a.move(7, 6, 7, 7))
-a.game_board.print_board()
-print(a.move(4, 5, 5, 6))
-a.game_board.print_board()
-print(a.move(7, 7, 7, 6))
-a.game_board.print_board()
-print(a.move(6, 3, 6, 4))
-a.game_board.print_board()
-print(a.move(7, 6, 7, 7))
-a.game_board.print_board()
-print(a.move(6, 4, 6, 5))
+print(a.move(1, 2, 0, 2))
 a.game_board.print_board()
 print(a.state)
