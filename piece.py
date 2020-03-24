@@ -31,7 +31,7 @@ class Pawn(Piece):
         """
         if new_row == self.row and new_col == self.col:
             return False
-        if self.color == 'w':  # Need to implement en passant, promotion.
+        if self.color == 'w':  # Need to implement en passant.
             if new_row >= self.row:
                 return False
             if new_col == self.col:
@@ -88,6 +88,7 @@ class Rook(Piece):
     def __init__(self, row, col, color):
         """Creates a new rook piece."""
         super().__init__(row, col, color)
+        self.moved = False
 
     def is_move_valid(self, new_row, new_col, board):
         """Returns True if move is valid.
@@ -99,7 +100,7 @@ class Rook(Piece):
         """
         if new_row == self.row and new_col == self.col:
             return False
-        if new_row != self.row and new_col != self.col:  # Need to add castling
+        if new_row != self.row and new_col != self.col:
             return False
         else:
             if new_row == self.row:
@@ -339,6 +340,8 @@ class King(Piece):
     def __init__(self, row, col, color):
         """Creates a new king piece."""
         super().__init__(row, col, color)
+        self.moved = False
+        self.queen_side = False
 
     def is_move_valid(self, new_row, new_col, board):
         """Returns True if move is valid.
@@ -348,8 +351,18 @@ class King(Piece):
         new_col -- the column on the game board that piece is trying to move to
         board -- the game board that piece is currently on
         """
-        if new_row == self.row and new_col == self.col:
+        if new_row == self.row and new_col == self.col:  # Need to add castling
             return False
+        if self.color == 'w':
+            if self.row == 7 and self.col == 4 and self.moved is False:
+                if new_row == self.row and self.col - new_col == 2:
+                    if isinstance(board[7][0], Rook) is True and \
+                            board[7][0].moved is False:
+                        for col in range(1, 4):
+                            if board[7][col] != '_':
+                                return False
+                        self.queen_side = True
+                        return True
         if new_row - self.row in range(-1, 2) and \
                 new_col - self.col in range(-1, 2):
             return True

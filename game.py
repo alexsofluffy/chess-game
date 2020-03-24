@@ -19,30 +19,31 @@ class Chess:
                 for col in range(8):
                     piece = self.board[row][col]
                     if isinstance(piece, King) is True and piece.color == 'w':
-                        king_pos.append(row)
-                        king_pos.append(col)
-            for row in range(8):
-                for col in range(8):
-                    piece = self.board[row][col]
-                    if piece != '_' and piece.color == 'b':
-                        if piece.is_move_valid(king_pos[0], king_pos[1],
-                                               self.board) is True:
-                            return True
+                        king_pos = [row, col]
+                        for row2 in range(8):
+                            for col2 in range(8):
+                                piece = self.board[row2][col2]
+                                if piece != '_' and piece.color == 'b':
+                                    if piece.is_move_valid(king_pos[0],
+                                                           king_pos[1],
+                                                           self.board) is True:
+                                        return True
+                        return False
         if player == 'b':
             for row in range(8):
                 for col in range(8):
                     piece = self.board[row][col]
                     if isinstance(piece, King) is True and piece.color == 'b':
-                        king_pos.append(row)
-                        king_pos.append(col)
-            for row in range(8):
-                for col in range(8):
-                    piece = self.board[row][col]
-                    if piece != '_' and piece.color == 'w':
-                        if piece.is_move_valid(king_pos[0], king_pos[1],
-                                               self.board) is True:
-                            return True
-        return False
+                        king_pos = [row, col]
+                        for row2 in range(8):
+                            for col2 in range(8):
+                                piece = self.board[row2][col2]
+                                if piece != '_' and piece.color == 'w':
+                                    if piece.is_move_valid(king_pos[0],
+                                                           king_pos[1],
+                                                           self.board) is True:
+                                        return True
+                        return False
 
     def is_in_mate(self, player):
         """Checks whether the specified player is in checkmate or stalemate."""
@@ -141,6 +142,13 @@ class Chess:
         if piece.is_move_valid(new_row, new_col, self.board) is False:
             return False
 
+        # Checks if piece is trying to castle.
+        if self.turn == 'w':
+            if isinstance(piece, King) is True:
+                if piece.queen_side is True:
+                    if self.is_in_check('w') is True:
+                        return False
+
         # Updates the position of the piece.
         self.board[new_row][new_col] = piece
         self.board[row][col] = '_'
@@ -159,27 +167,13 @@ class Chess:
                 return False
             if isinstance(piece, Pawn) is True:
                 if new_row == 0 or new_row == 7:
-                    while True:
-                        new_piece = input(
-                            'What piece would you like to promote to? ')
-                        if new_piece == 'queen' or new_piece == 'Queen':
-                            self.board[new_row][new_col] = Queen(new_row,
-                                                                 new_col, 'w')
-                            break
-                        if new_piece == 'rook' or new_piece == 'Rook':
-                            self.board[new_row][new_col] = Rook(new_row,
-                                                                new_col, 'w')
-                            break
-                        if new_piece == 'bishop' or new_piece == 'Bishop':
-                            self.board[new_row][new_col] = Bishop(new_row,
-                                                                  new_col, 'w')
-                            break
-                        if new_piece == 'knight' or new_piece == 'Knight':
-                            self.board[new_row][new_col] = Knight(new_row,
-                                                                  new_col, 'w')
-                            break
-                        else:
-                            print('That is an invalid piece. Try again.')
+                    self.board[new_row][new_col] = Queen(new_row, new_col, 'w')
+            if isinstance(piece, Rook) is True:
+                if piece.moved is False:
+                    piece.moved = True
+            if isinstance(piece, King) is True:
+                if piece.moved is False:
+                    piece.moved = True
             if self.is_in_check('b') is True:
                 if self.is_in_mate('b') is True:
                     self.state = 'WHITE_WON'
@@ -195,27 +189,13 @@ class Chess:
                 return False
             if isinstance(piece, Pawn) is True:
                 if new_row == 0 or new_row == 7:
-                    while True:
-                        new_piece = input(
-                            'What piece would you like to promote to? ')
-                        if new_piece == 'queen' or new_piece == 'Queen':
-                            self.board[new_row][new_col] = Queen(new_row,
-                                                                 new_col, 'b')
-                            break
-                        if new_piece == 'rook' or new_piece == 'Rook':
-                            self.board[new_row][new_col] = Rook(new_row,
-                                                                new_col, 'b')
-                            break
-                        if new_piece == 'bishop' or new_piece == 'Bishop':
-                            self.board[new_row][new_col] = Bishop(new_row,
-                                                                  new_col, 'b')
-                            break
-                        if new_piece == 'knight' or new_piece == 'Knight':
-                            self.board[new_row][new_col] = Knight(new_row,
-                                                                  new_col, 'b')
-                            break
-                        else:
-                            print('That is an invalid piece. Try again.')
+                    self.board[new_row][new_col] = Queen(new_row, new_col, 'b')
+            if isinstance(piece, Rook) is True:
+                if piece.moved is False:
+                    piece.moved = True
+            if isinstance(piece, King) is True:
+                if piece.moved is False:
+                    piece.moved = True
             if self.is_in_check('w') is True:
                 if self.is_in_mate('w') is True:
                     self.state = 'BLACK_WON'
@@ -233,22 +213,16 @@ class Chess:
 
 a = Chess()
 a.game_board.print_board()
-print(a.move(6, 2, 4, 2))
+print(a.move(6, 7, 5, 7))
 a.game_board.print_board()
-print(a.move(0, 4, 0, 5))
+print(a.move(1, 2, 2, 2))
 a.game_board.print_board()
-print(a.move(4, 2, 3, 2))
+print(a.move(5, 7, 4, 7))
 a.game_board.print_board()
-print(a.move(0, 5, 0, 6))
+print(a.move(0, 3, 2, 1))
 a.game_board.print_board()
-print(a.move(3, 2, 2, 2))
+print(a.move(4, 7, 3, 7))
 a.game_board.print_board()
-print(a.move(0, 6, 0, 7))
-a.game_board.print_board()
-print(a.move(2, 2, 1, 2))
-a.game_board.print_board()
-print(a.move(0, 7, 0, 6))
-a.game_board.print_board()
-print(a.move(1, 2, 0, 2))
+print(a.move(2, 1, 4, 1))
 a.game_board.print_board()
 print(a.state)
