@@ -13,7 +13,6 @@ class Chess:
 
     def is_in_check(self, player):
         """Checks whether or not the specified player is in check."""
-        king_pos = []
         if player == 'w':
             for row in range(8):
                 for col in range(8):
@@ -142,12 +141,50 @@ class Chess:
         if piece.is_move_valid(new_row, new_col, self.board) is False:
             return False
 
-        # Checks if piece is trying to castle.
-        if self.turn == 'w':
-            if isinstance(piece, King) is True:
-                if piece.queen_side is True:
+        # Checks if player is trying to castle.
+        castle = False
+        if isinstance(piece, King) is True and piece.moved is False:
+            if self.turn == 'w':
+                if new_row == 7 and new_col == 2:
                     if self.is_in_check('w') is True:
                         return False
+                    self.board[new_row][3] = piece
+                    self.board[row][col] = '_'
+                    piece.row = new_row
+                    piece.col = 3
+                    if self.is_in_check('w') is True:
+                        self.board[new_row][3] = '_'
+                        self.board[row][col] = piece
+                        piece.row = row
+                        piece.col = col
+                        return False
+                    self.board[new_row][3] = '_'
+                    self.board[row][col] = piece
+                    piece.row = row
+                    piece.col = col
+                    castle = True
+
+                if new_row == 7 and new_col == 6:
+                    if self.is_in_check('w') is True:
+                        return False
+                    self.board[new_row][5] = piece
+                    self.board[row][col] = '_'
+                    piece.row = new_row
+                    piece.col = 5
+                    if self.is_in_check('w') is True:
+                        self.board[new_row][5] = '_'
+                        self.board[row][col] = piece
+                        piece.row = row
+                        piece.col = col
+                        return False
+                    self.board[new_row][5] = '_'
+                    self.board[row][col] = piece
+                    piece.row = row
+                    piece.col = col
+                    castle = True
+
+
+
 
         # Updates the position of the piece.
         self.board[new_row][new_col] = piece
@@ -174,6 +211,19 @@ class Chess:
             if isinstance(piece, King) is True:
                 if piece.moved is False:
                     piece.moved = True
+                if castle is True:
+                    if new_col < col:
+                        rook = self.board[7][0]
+                        self.board[7][3] = rook
+                        self.board[7][0] = '_'
+                        rook.row = 7
+                        rook.col = 3
+                    if new_col > col:
+                        rook = self.board[7][7]
+                        self.board[7][5] = rook
+                        self.board[7][7] = '_'
+                        rook.row = 7
+                        rook.col = 5
             if self.is_in_check('b') is True:
                 if self.is_in_mate('b') is True:
                     self.state = 'WHITE_WON'
@@ -223,6 +273,9 @@ print(a.move(0, 3, 2, 1))
 a.game_board.print_board()
 print(a.move(4, 7, 3, 7))
 a.game_board.print_board()
-print(a.move(2, 1, 4, 1))
+print(a.move(2, 1, 2, 0))
+a.game_board.print_board()
+print(a.move(7, 4, 7, 2))
 a.game_board.print_board()
 print(a.state)
+print(a.is_in_check('w'))

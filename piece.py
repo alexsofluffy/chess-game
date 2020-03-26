@@ -341,7 +341,6 @@ class King(Piece):
         """Creates a new king piece."""
         super().__init__(row, col, color)
         self.moved = False
-        self.queen_side = False
 
     def is_move_valid(self, new_row, new_col, board):
         """Returns True if move is valid.
@@ -353,18 +352,24 @@ class King(Piece):
         """
         if new_row == self.row and new_col == self.col:  # Need to add castling
             return False
-        if self.color == 'w':
-            if self.row == 7 and self.col == 4 and self.moved is False:
-                if new_row == self.row and self.col - new_col == 2:
-                    if isinstance(board[7][0], Rook) is True and \
-                            board[7][0].moved is False:
-                        for col in range(1, 4):
-                            if board[7][col] != '_':
-                                return False
-                        self.queen_side = True
-                        return True
         if new_row - self.row in range(-1, 2) and \
                 new_col - self.col in range(-1, 2):
             return True
-        else:
-            return False
+        if self.moved is False:
+            if self.color == 'w':
+                if new_row == 7 and new_col == 2:
+                    rook = board[7][0]
+                    if isinstance(rook, Rook) is True and rook.moved is False:
+                        for i in range(1, 4):
+                            if board[new_row][i] != '_':
+                                return False
+                        return True
+                if new_row == 7 and new_col == 6:
+                    rook = board[7][7]
+                    if isinstance(rook, Rook) is True and rook.moved is False:
+                        for i in range(5, 7):
+                            if board[new_row][i] != '_':
+                                return False
+                        return True
+        return False
+
