@@ -163,7 +163,6 @@ class Chess:
                     piece.row = row
                     piece.col = col
                     castle = True
-
                 if new_row == 7 and new_col == 6:
                     if self.is_in_check('w') is True:
                         return False
@@ -182,9 +181,43 @@ class Chess:
                     piece.row = row
                     piece.col = col
                     castle = True
-
-
-
+            if self.turn == 'b':
+                if new_row == 0 and new_col == 2:
+                    if self.is_in_check('b') is True:
+                        return False
+                    self.board[new_row][3] = piece
+                    self.board[row][col] = '_'
+                    piece.row = new_row
+                    piece.col = 3
+                    if self.is_in_check('b') is True:
+                        self.board[new_row][3] = '_'
+                        self.board[row][col] = piece
+                        piece.row = row
+                        piece.col = col
+                        return False
+                    self.board[new_row][3] = '_'
+                    self.board[row][col] = piece
+                    piece.row = row
+                    piece.col = col
+                    castle = True
+                if new_row == 0 and new_col == 6:
+                    if self.is_in_check('b') is True:
+                        return False
+                    self.board[new_row][5] = piece
+                    self.board[row][col] = '_'
+                    piece.row = new_row
+                    piece.col = 5
+                    if self.is_in_check('b') is True:
+                        self.board[new_row][5] = '_'
+                        self.board[row][col] = piece
+                        piece.row = row
+                        piece.col = col
+                        return False
+                    self.board[new_row][5] = '_'
+                    self.board[row][col] = piece
+                    piece.row = row
+                    piece.col = col
+                    castle = True
 
         # Updates the position of the piece.
         self.board[new_row][new_col] = piece
@@ -246,6 +279,19 @@ class Chess:
             if isinstance(piece, King) is True:
                 if piece.moved is False:
                     piece.moved = True
+                if castle is True:
+                    if new_col < col:
+                        rook = self.board[0][0]
+                        self.board[0][3] = rook
+                        self.board[0][0] = '_'
+                        rook.row = 0
+                        rook.col = 3
+                    if new_col > col:
+                        rook = self.board[0][7]
+                        self.board[0][5] = rook
+                        self.board[0][7] = '_'
+                        rook.row = 0
+                        rook.col = 5
             if self.is_in_check('w') is True:
                 if self.is_in_mate('w') is True:
                     self.state = 'BLACK_WON'

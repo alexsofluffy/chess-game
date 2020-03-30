@@ -371,5 +371,20 @@ class King(Piece):
                             if board[new_row][i] != '_':
                                 return False
                         return True
+            if self.color == 'b':
+                if new_row == 0 and new_col == 2:
+                    rook = board[0][0]
+                    if isinstance(rook, Rook) is True and rook.moved is False:
+                        for i in range(1, 4):
+                            if board[new_row][i] != '_':
+                                return False
+                        return True
+                if new_row == 0 and new_col == 6:
+                    rook = board[0][7]
+                    if isinstance(rook, Rook) is True and rook.moved is False:
+                        for i in range(5, 7):
+                            if board[new_row][i] != '_':
+                                return False
+                        return True
         return False
 
