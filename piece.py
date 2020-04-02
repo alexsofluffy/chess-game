@@ -20,6 +20,7 @@ class Pawn(Piece):
     def __init__(self, row, col, color):
         """Creates a new pawn piece, inherits properties from Piece class."""
         super().__init__(row, col, color)
+        self.moved_2 = False
 
     def is_move_valid(self, new_row, new_col, board):
         """Returns True if move is valid.
@@ -55,6 +56,8 @@ class Pawn(Piece):
                         return False
                 if self.row - new_row != 1:
                     return False
+                if board[new_row][new_col] == '_':
+                    return False
         if self.color == 'b':
             if new_row <= self.row:
                 return False
@@ -78,6 +81,8 @@ class Pawn(Piece):
                     if new_col - self.col != 1:
                         return False
                 if new_row - self.row != 1:
+                    return False
+                if board[new_row][new_col] == '_':
                     return False
         return True
 
@@ -350,7 +355,7 @@ class King(Piece):
         new_col -- the column on the game board that piece is trying to move to
         board -- the game board that piece is currently on
         """
-        if new_row == self.row and new_col == self.col:  # Need to add castling
+        if new_row == self.row and new_col == self.col:
             return False
         if new_row - self.row in range(-1, 2) and \
                 new_col - self.col in range(-1, 2):
