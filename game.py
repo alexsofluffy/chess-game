@@ -10,6 +10,7 @@ class Chess:
         self.board = self.game_board.board
         self.turn = 'w'
         self.state = 'UNFINISHED'
+        self.turn_count = 0
 
     def is_in_check(self, player):
         """Checks whether or not the specified player is in check."""
@@ -219,6 +220,25 @@ class Chess:
                     piece.col = col
                     castle = True
 
+        # Checks if player is trying to perform an "en-passant".
+        en_passant = False
+        if isinstance(piece, Pawn) is True:
+            if piece.en_passant is True:
+                if self.turn == 'w':
+                    captured_piece = self.board[new_row + 1][new_col]
+                    if captured_piece.turn_moved != self.turn_count - 1:
+                        piece.en_passant = False
+                        return False
+                    else:
+                        en_passant = True
+                if self.turn == 'b':
+                    captured_piece = self.board[new_row - 1][new_col]
+                    if captured_piece.turn_moved != self.turn_count - 1:
+                        piece.en_passant = False
+                        return False
+                    else:
+                        en_passant = True
+
         # Updates the position of the piece.
         self.board[new_row][new_col] = piece
         self.board[row][col] = '_'
@@ -238,6 +258,12 @@ class Chess:
             if isinstance(piece, Pawn) is True:
                 if new_row == 0 or new_row == 7:
                     self.board[new_row][new_col] = Queen(new_row, new_col, 'w')
+                if piece.moved_2 is True:
+                    piece.turn_moved = self.turn_count
+                    piece.moved_2 = False
+                if en_passant is True:
+                    self.board[new_row + 1][new_col] = '_'
+                    piece.en_passant = False
             if isinstance(piece, Rook) is True:
                 if piece.moved is False:
                     piece.moved = True
@@ -273,6 +299,12 @@ class Chess:
             if isinstance(piece, Pawn) is True:
                 if new_row == 0 or new_row == 7:
                     self.board[new_row][new_col] = Queen(new_row, new_col, 'b')
+                if piece.moved_2 is True:
+                    piece.turn_moved = self.turn_count
+                    piece.moved_2 = False
+                if en_passant is True:
+                    self.board[new_row - 1][new_col] = '_'
+                    piece.en_passant = False
             if isinstance(piece, Rook) is True:
                 if piece.moved is False:
                     piece.moved = True
@@ -304,24 +336,26 @@ class Chess:
             self.turn = 'b'
         else:
             self.turn = 'w'
+        self.turn_count += 1
         return True
 
 
 a = Chess()
 a.game_board.print_board()
-print(a.move(6, 7, 5, 7))
+print(a.move(6, 0, 5, 0))
 a.game_board.print_board()
-print(a.move(1, 2, 2, 2))
+print(a.move(1, 3, 3, 3))
 a.game_board.print_board()
-print(a.move(5, 7, 4, 7))
+print(a.move(5, 0, 4, 0))
 a.game_board.print_board()
-print(a.move(0, 3, 2, 1))
+print(a.move(1, 0, 2, 0))
 a.game_board.print_board()
-print(a.move(4, 7, 3, 7))
+print(a.move(6, 4, 4, 4))
 a.game_board.print_board()
-print(a.move(2, 1, 2, 0))
+print(a.move(2, 0, 3, 0))
 a.game_board.print_board()
-print(a.move(7, 4, 7, 2))
+print(a.move(4, 4, 3, 4))
+a.game_board.print_board()
+print(a.move(3, 3, 4, 4))
 a.game_board.print_board()
 print(a.state)
-print(a.is_in_check('w'))
