@@ -1,5 +1,5 @@
 from board import Board
-from piece import Pawn, Rook, Knight, Bishop, Queen, King
+from piece import Pawn, Rook, Queen, King
 
 
 class Chess:
@@ -338,24 +338,3 @@ class Chess:
             self.turn = 'w'
         self.turn_count += 1
         return True
-
-
-a = Chess()
-a.game_board.print_board()
-print(a.move(6, 0, 5, 0))
-a.game_board.print_board()
-print(a.move(1, 3, 3, 3))
-a.game_board.print_board()
-print(a.move(5, 0, 4, 0))
-a.game_board.print_board()
-print(a.move(1, 0, 2, 0))
-a.game_board.print_board()
-print(a.move(6, 4, 4, 4))
-a.game_board.print_board()
-print(a.move(2, 0, 3, 0))
-a.game_board.print_board()
-print(a.move(4, 4, 3, 4))
-a.game_board.print_board()
-print(a.move(3, 3, 4, 4))
-a.game_board.print_board()
-print(a.state)

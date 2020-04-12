@@ -21,6 +21,8 @@ class Pawn(Piece):
         """Creates a new pawn piece, inherits properties from Piece class."""
         super().__init__(row, col, color)
         self.moved_2 = False
+        self.en_passant = False
+        self.turn_moved = None
 
     def is_move_valid(self, new_row, new_col, board):
         """Returns True if move is valid.
@@ -42,20 +44,33 @@ class Pawn(Piece):
                     if self.row - new_row == 2:
                         if board[self.row - 1][self.col] != '_':
                             return False
+                        self.moved_2 = True
                 if self.row < 6:
                     if self.row - new_row != 1:
                         return False
                 if board[new_row][new_col] != '_':
                     return False
             else:
+                if self.row - new_row != 1:
+                    return False
                 if new_col < self.col:
                     if self.col - new_col != 1:
                         return False
+                    if self.row == 3 and \
+                        board[new_row][new_col] == '_' and \
+                        isinstance(board[self.row][self.col - 1], Pawn) \
+                            is True:
+                        self.en_passant = True
+                        return True
                 if new_col > self.col:
                     if new_col - self.col != 1:
                         return False
-                if self.row - new_row != 1:
-                    return False
+                    if self.row == 3 and \
+                        board[new_row][new_col] == '_' and \
+                        isinstance(board[self.row][self.col + 1], Pawn) \
+                            is True:
+                        self.en_passant = True
+                        return True
                 if board[new_row][new_col] == '_':
                     return False
         if self.color == 'b':
@@ -68,20 +83,33 @@ class Pawn(Piece):
                     if new_row - self.row == 2:
                         if board[new_row - 1][self.col] != '_':
                             return False
+                        self.moved_2 = True
                 if self.row > 1:
                     if new_row - self.row != 1:
                         return False
                 if board[new_row][new_col] != '_':
                     return False
             else:
+                if new_row - self.row != 1:
+                    return False
                 if new_col < self.col:
                     if self.col - new_col != 1:
                         return False
+                    if self.row == 4 and \
+                        board[new_row][new_col] == '_' and \
+                        isinstance(board[self.row][self.col - 1], Pawn) \
+                            is True:
+                        self.en_passant = True
+                        return True
                 if new_col > self.col:
                     if new_col - self.col != 1:
                         return False
-                if new_row - self.row != 1:
-                    return False
+                    if self.row == 4 and \
+                        board[new_row][new_col] == '_' and \
+                        isinstance(board[self.row][self.col + 1], Pawn) \
+                            is True:
+                        self.en_passant = True
+                        return True
                 if board[new_row][new_col] == '_':
                     return False
         return True
@@ -392,4 +420,3 @@ class King(Piece):
                                 return False
                         return True
         return False
-
