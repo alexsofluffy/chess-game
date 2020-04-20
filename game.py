@@ -10,7 +10,7 @@ class Chess:
         self.board = self.game_board.board
         self.turn = 'w'
         self.state = 'UNFINISHED'
-        self.turn_count = 0
+        self.turn_count = 1
 
     def is_in_check(self, player):
         """Checks whether or not the specified player is in check."""
