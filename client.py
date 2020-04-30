@@ -24,7 +24,7 @@ w_king = pygame.image.load('assets/w_king.png')
 clientNumber = 0
 
 grid_key = {
-    0: (90, 160),
+    0: (91, 160),
     1: (161, 230),
     2: (231, 300),
     3: (301, 370),
@@ -119,7 +119,6 @@ def redrawWindow(mouse_x=None, mouse_y=None):
     win.blit(coor_msg, (600, 50))
 
     if indicate_square_from is True:
-        # win.blit(test_msg, (400, 700))
         pygame.draw.rect(win, (255, 255, 194),
                          (grid_key.get(mouse_y)[0] - 1,
                           grid_key.get(mouse_x)[0] - 1, 70, 70))
@@ -147,10 +146,12 @@ def main():
     mouse_x = None
     mouse_y = None
 
+    mouse_x2 = None
+    mouse_y2 = None
+
     global indicate_square_from
 
-    move_from = None
-    move_to = None
+
 
 
 
@@ -165,30 +166,63 @@ def main():
                 if event.key == pygame.K_q:
                     pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                if 90 <= mouse_pos[0] <= 650 and 90 <= mouse_pos[1] <= 650:
-                    for key, value in grid_key.items():
-                        if value[0] <= mouse_pos[1] <= value[1]:
-                            mouse_x = key
-                        if value[0] <= mouse_pos[0] <= value[1]:
-                            mouse_y = key
-                else:
-                    mouse_x = None
-                    mouse_y = None
-        if mouse_x is not None and mouse_y is not None:
-            if game.board[mouse_x][mouse_y] != '_':
-                if game.turn == 'w':
-                    if game.board[mouse_x][mouse_y].color == 'w':
-                        indicate_square_from = True
-                        move_from = (mouse_x, mouse_y)
+                if indicate_square_from is True:
+                    mouse_pos2 = pygame.mouse.get_pos()
+                    if 90 <= mouse_pos2[0] <= 650 and 90 <= mouse_pos2[1] <= 650:
+                        for key, value in grid_key.items():
+                            if value[0] <= mouse_pos2[1] <= value[1]:
+                                mouse_x2 = key
+                            if value[0] <= mouse_pos2[0] <= value[1]:
+                                mouse_y2 = key
                     else:
+                        mouse_x = None
+                        mouse_y = None
                         indicate_square_from = False
-                        move_from = None
-            else:
-                indicate_square_from = False
-                move_from = None
+                        continue
+                else:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if 90 <= mouse_pos[0] <= 650 and 90 <= mouse_pos[1] <= 650:
+                        for key, value in grid_key.items():
+                            if value[0] <= mouse_pos[1] <= value[1]:
+                                mouse_x = key
+                            if value[0] <= mouse_pos[0] <= value[1]:
+                                mouse_y = key
+                    else:
+                        mouse_x = None
+                        mouse_y = None
 
-        redrawWindow(mouse_x, mouse_y)
+
+        if mouse_x2 is not None and mouse_y2 is not None:
+            if game.move(mouse_x, mouse_y, mouse_x2, mouse_y2) is True:
+                piece_image = grid[mouse_x][mouse_y]
+                grid[mouse_x][mouse_y] = '_'
+                grid[mouse_x2][mouse_y2] = piece_image
+                mouse_x = None
+                mouse_y = None
+                mouse_x2 = None
+                mouse_y2 = None
+                indicate_square_from = False
+                continue
+            else:
+                mouse_x = None
+                mouse_y = None
+                mouse_x2 = None
+                mouse_y2 = None
+                indicate_square_from = False
+                continue
+
+
+        else:
+            if mouse_x is not None and mouse_y is not None:
+                if game.board[mouse_x][mouse_y] != '_':
+                    if game.turn == 'w':
+                        if game.board[mouse_x][mouse_y].color == 'w':
+                            indicate_square_from = True
+                    if game.turn == 'b':
+                        if game.board[mouse_x][mouse_y].color == 'b':
+                            indicate_square_from = True
+
+            redrawWindow(mouse_x, mouse_y)
 
 
 main()
