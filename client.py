@@ -95,9 +95,11 @@ opponent_color = "black"
 player_msg = my_font.render("You are {color}".format(color=player_color),
                             True, (255, 0, 0))
 indicate_square_from = False
+indicate_square_to = False
 
 
-def redrawWindow(mouse_x=None, mouse_y=None):
+def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
+                 x2_copy=None, y2_copy=None):
     win.fill((0, 0, 0))
     for i in range(8):
         y = 70 * i + 90
@@ -115,13 +117,23 @@ def redrawWindow(mouse_x=None, mouse_y=None):
                     pygame.draw.rect(win, (221, 219, 197), (x, y, 70, 70))
     win.blit(quit_msg, (20, 20))
     win.blit(player_msg, (300, 50))
-    coor_msg = my_font.render(str(mouse_x) + ", " + str(mouse_y), True, (0, 255, 0))
-    win.blit(coor_msg, (600, 50))
+    # The coordinate message is used for testing purposes.
+    # coor_msg = my_font.render(str(mouse_x) + ", " + str(mouse_y), True,
+    #                           (0, 255, 0))
+    # win.blit(coor_msg, (600, 50))
 
     if indicate_square_from is True:
         pygame.draw.rect(win, (255, 255, 194),
                          (grid_key.get(mouse_y)[0] - 1,
                           grid_key.get(mouse_x)[0] - 1, 70, 70))
+
+    if indicate_square_to is True:
+        pygame.draw.rect(win, (255, 255, 194),
+                         (grid_key.get(y_copy)[0] - 1,
+                          grid_key.get(x_copy)[0] - 1, 70, 70))
+        pygame.draw.rect(win, (255, 255, 194),
+                         (grid_key.get(y2_copy)[0] - 1,
+                          grid_key.get(x2_copy)[0] - 1, 70, 70))
 
     for i in range(8):
         for j in range(8):
@@ -149,7 +161,13 @@ def main():
     mouse_x2 = None
     mouse_y2 = None
 
+    x_copy = None
+    y_copy = None
+    x2_copy = None
+    y2_copy = None
+
     global indicate_square_from
+    global indicate_square_to
 
 
 
@@ -197,11 +215,17 @@ def main():
                 piece_image = grid[mouse_x][mouse_y]
                 grid[mouse_x][mouse_y] = '_'
                 grid[mouse_x2][mouse_y2] = piece_image
+                x_copy = mouse_x
+                y_copy = mouse_y
+                x2_copy = mouse_x2
+                y2_copy = mouse_y2
                 mouse_x = None
                 mouse_y = None
                 mouse_x2 = None
                 mouse_y2 = None
                 indicate_square_from = False
+                indicate_square_to = True
+                redrawWindow(mouse_x, mouse_y, x_copy, y_copy, x2_copy, y2_copy)
                 continue
             else:
                 mouse_x = None
@@ -222,7 +246,10 @@ def main():
                         if game.board[mouse_x][mouse_y].color == 'b':
                             indicate_square_from = True
 
-            redrawWindow(mouse_x, mouse_y)
+            if x_copy and y_copy and x2_copy and y2_copy is None:
+                redrawWindow(mouse_x, mouse_y)
+            else:
+                redrawWindow(mouse_x, mouse_y, x_copy, y_copy, x2_copy, y2_copy)
 
 
 main()
