@@ -338,3 +338,6 @@ class Chess:
             self.turn = 'w'
         self.turn_count += 1
         return True
+
+game = Chess()
+game.game_board.print_board()

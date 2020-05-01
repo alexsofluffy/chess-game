@@ -97,6 +97,10 @@ player_msg = my_font.render("You are {color}".format(color=player_color),
 indicate_square_from = False
 indicate_square_to = False
 
+pawn_selected = False
+
+
+
 
 def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
                  x2_copy=None, y2_copy=None):
@@ -117,10 +121,10 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
                     pygame.draw.rect(win, (221, 219, 197), (x, y, 70, 70))
     win.blit(quit_msg, (20, 20))
     win.blit(player_msg, (300, 50))
-    # The coordinate message is used for testing purposes.
-    # coor_msg = my_font.render(str(mouse_x) + ", " + str(mouse_y), True,
-    #                           (0, 255, 0))
-    # win.blit(coor_msg, (600, 50))
+    # coor_msg is used for testing purposes.
+    coor_msg = my_font.render(str(mouse_x) + ", " + str(mouse_y), True,
+                              (0, 255, 0))
+    win.blit(coor_msg, (600, 50))
 
     if indicate_square_from is True:
         pygame.draw.rect(win, (255, 255, 194),
@@ -140,8 +144,6 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
             if grid[i][j] != '_':
                 win.blit(grid[i][j].image, (grid_key.get(j)[0] + 3,
                                             grid_key.get(i)[0] + 3))
-
-
 
 
     pygame.display.update(win)
@@ -169,7 +171,7 @@ def main():
     global indicate_square_from
     global indicate_square_to
 
-
+    global pawn_selected
 
 
 
@@ -196,6 +198,8 @@ def main():
                         mouse_x = None
                         mouse_y = None
                         indicate_square_from = False
+                        if pawn_selected is True:
+                            pawn_selected = False
                         continue
                 else:
                     mouse_pos = pygame.mouse.get_pos()
@@ -212,6 +216,29 @@ def main():
 
         if mouse_x2 is not None and mouse_y2 is not None:
             if game.move(mouse_x, mouse_y, mouse_x2, mouse_y2) is True:
+                if pawn_selected is True:
+                    if game.turn == 'b':  # Meaning white pawn was moved
+                        if mouse_x - mouse_x2 == 1:
+                            if mouse_y > mouse_y2 and mouse_y - mouse_y2 == 1:
+                                if game.board[mouse_x][mouse_y2] == '_':
+                                    if grid[mouse_x][mouse_y2] != '_' and grid[mouse_x][mouse_y2].image == b_pawn:
+                                        grid[mouse_x][mouse_y2] = '_'
+                            if mouse_y < mouse_y2 and mouse_y2 - mouse_y == 1:
+                                if game.board[mouse_x][mouse_y2] == '_':
+                                    if grid[mouse_x][mouse_y2] != '_' and grid[mouse_x][mouse_y2].image == b_pawn:
+                                        grid[mouse_x][mouse_y2] = '_'
+                    if game.turn == 'w':  # Meaning black pawn was moved
+                        if mouse_x2 - mouse_x == 1:
+                            if mouse_y > mouse_y2 and mouse_y - mouse_y2 == 1:
+                                if game.board[mouse_x][mouse_y2] == '_':
+                                    if grid[mouse_x][mouse_y2] != '_' and grid[mouse_x][mouse_y2].image == w_pawn:
+                                        grid[mouse_x][mouse_y2] = '_'
+                            if mouse_y < mouse_y2 and mouse_y2 - mouse_y == 1:
+                                if game.board[mouse_x][mouse_y2] == '_':
+                                    if grid[mouse_x][mouse_y2] != '_' and grid[mouse_x][mouse_y2].image == w_pawn:
+                                        grid[mouse_x][mouse_y2] = '_'
+                    pawn_selected = False
+
                 piece_image = grid[mouse_x][mouse_y]
                 grid[mouse_x][mouse_y] = '_'
                 grid[mouse_x2][mouse_y2] = piece_image
@@ -233,6 +260,8 @@ def main():
                 mouse_x2 = None
                 mouse_y2 = None
                 indicate_square_from = False
+                if pawn_selected is True:
+                    pawn_selected = False
                 continue
 
 
@@ -242,10 +271,13 @@ def main():
                     if game.turn == 'w':
                         if game.board[mouse_x][mouse_y].color == 'w':
                             indicate_square_from = True
+                            if isinstance(game.board[mouse_x][mouse_y], Pawn) is True:
+                                pawn_selected = True
                     if game.turn == 'b':
                         if game.board[mouse_x][mouse_y].color == 'b':
                             indicate_square_from = True
-
+                            if isinstance(game.board[mouse_x][mouse_y], Pawn) is True:
+                                pawn_selected = True
             if x_copy and y_copy and x2_copy and y2_copy is None:
                 redrawWindow(mouse_x, mouse_y)
             else:
