@@ -50,58 +50,55 @@ grid_key = {
 
 class ChessImg:
     """Represents an image of a chess piece."""
-    def __init__(self, row, col, image):
+    def __init__(self, image):
         """Creates a new chess piece image.
 
         Keyword arguments:
-        row -- the row on the game grid that piece is located
-        col -- the column on the game grid that piece is located
         image -- the actual image file for the piece
         """
-        self.row = row
-        self.col = col
         self.image = image
 
 
 # Creates and assigns images of the corresponding chess pieces on the game
 # board, onto the game grid.
-grid[1][0] = ChessImg(1, 0, b_pawn)
-grid[1][1] = ChessImg(1, 1, b_pawn)
-grid[1][2] = ChessImg(1, 2, b_pawn)
-grid[1][3] = ChessImg(1, 3, b_pawn)
-grid[1][4] = ChessImg(1, 4, b_pawn)
-grid[1][5] = ChessImg(1, 5, b_pawn)
-grid[1][6] = ChessImg(1, 6, b_pawn)
-grid[1][7] = ChessImg(1, 7, b_pawn)
-grid[0][0] = ChessImg(0, 0, b_rook)
-grid[0][7] = ChessImg(0, 7, b_rook)
-grid[0][1] = ChessImg(0, 1, b_knight)
-grid[0][6] = ChessImg(0, 6, b_knight)
-grid[0][2] = ChessImg(0, 2, b_bishop)
-grid[0][5] = ChessImg(0, 5, b_bishop)
-grid[0][3] = ChessImg(0, 3, b_queen)
-grid[0][4] = ChessImg(0, 4, b_king)
-grid[6][0] = ChessImg(6, 0, w_pawn)
-grid[6][1] = ChessImg(6, 1, w_pawn)
-grid[6][2] = ChessImg(6, 2, w_pawn)
-grid[6][3] = ChessImg(6, 3, w_pawn)
-grid[6][4] = ChessImg(6, 4, w_pawn)
-grid[6][5] = ChessImg(6, 5, w_pawn)
-grid[6][6] = ChessImg(6, 6, w_pawn)
-grid[6][7] = ChessImg(6, 7, w_pawn)
-grid[7][0] = ChessImg(7, 0, w_rook)
-grid[7][7] = ChessImg(7, 7, w_rook)
-grid[7][1] = ChessImg(7, 1, w_knight)
-grid[7][6] = ChessImg(7, 6, w_knight)
-grid[7][2] = ChessImg(7, 2, w_bishop)
-grid[7][5] = ChessImg(7, 5, w_bishop)
-grid[7][3] = ChessImg(7, 3, w_queen)
-grid[7][4] = ChessImg(7, 4, w_king)
+grid[1][0] = ChessImg(b_pawn)
+grid[1][1] = ChessImg(b_pawn)
+grid[1][2] = ChessImg(b_pawn)
+grid[1][3] = ChessImg(b_pawn)
+grid[1][4] = ChessImg(b_pawn)
+grid[1][5] = ChessImg(b_pawn)
+grid[1][6] = ChessImg(b_pawn)
+grid[1][7] = ChessImg(b_pawn)
+grid[0][0] = ChessImg(b_rook)
+grid[0][7] = ChessImg(b_rook)
+grid[0][1] = ChessImg(b_knight)
+grid[0][6] = ChessImg(b_knight)
+grid[0][2] = ChessImg(b_bishop)
+grid[0][5] = ChessImg(b_bishop)
+grid[0][3] = ChessImg(b_queen)
+grid[0][4] = ChessImg(b_king)
+grid[6][0] = ChessImg(w_pawn)
+grid[6][1] = ChessImg(w_pawn)
+grid[6][2] = ChessImg(w_pawn)
+grid[6][3] = ChessImg(w_pawn)
+grid[6][4] = ChessImg(w_pawn)
+grid[6][5] = ChessImg(w_pawn)
+grid[6][6] = ChessImg(w_pawn)
+grid[6][7] = ChessImg(w_pawn)
+grid[7][0] = ChessImg(w_rook)
+grid[7][7] = ChessImg(w_rook)
+grid[7][1] = ChessImg(w_knight)
+grid[7][6] = ChessImg(w_knight)
+grid[7][2] = ChessImg(w_bishop)
+grid[7][5] = ChessImg(w_bishop)
+grid[7][3] = ChessImg(w_queen)
+grid[7][4] = ChessImg(w_king)
 
 # Global variables live here.
 indicate_square_from = False
 indicate_square_to = False
 pawn_selected = False
+king_selected = False
 
 # UI and display fonts live here.
 my_font = pygame.font.SysFont("arial", 30)
@@ -189,6 +186,7 @@ def main():
     global indicate_square_from
     global indicate_square_to
     global pawn_selected
+    global king_selected
 
     # Main game loop that runs until user quits or closes client window. To
     # make it easier to follow the logic of this loop, steps are commented in
@@ -222,6 +220,8 @@ def main():
                         indicate_square_from = False
                         if pawn_selected is True:
                             pawn_selected = False
+                        if king_selected is True:
+                            king_selected = False
                         continue
                 else:
                     # Step 1: Updates x and y coordinates of mouse if a square
@@ -273,6 +273,28 @@ def main():
                                         grid[mouse_x][mouse_y2] = '_'
                     pawn_selected = False
 
+                # Special rules for castling.
+                if king_selected is True:
+                    if game.turn == 'b':  # Meaning white king was moved.
+                        if mouse_x2 == 7 and mouse_y2 == 2:
+                            rook_image = grid[7][0]
+                            grid[7][0] = '_'
+                            grid[7][3] = rook_image
+                        if mouse_x2 == 7 and mouse_y2 == 6:
+                            rook_image = grid[7][7]
+                            grid[7][7] = '_'
+                            grid[7][5] = rook_image
+                    if game.turn == 'w':  # Meaning black king was moved.
+                        if mouse_x2 == 0 and mouse_y2 == 2:
+                            rook_image = grid[0][0]
+                            grid[0][0] = '_'
+                            grid[0][3] = rook_image
+                        if mouse_x2 == 0 and mouse_y2 == 6:
+                            rook_image = grid[0][7]
+                            grid[0][7] = '_'
+                            grid[0][5] = rook_image
+                    king_selected = False
+
                 piece_image = grid[mouse_x][mouse_y]
                 grid[mouse_x][mouse_y] = '_'
                 grid[mouse_x2][mouse_y2] = piece_image
@@ -312,12 +334,20 @@ def main():
                             if isinstance(game.board[mouse_x][mouse_y], Pawn) \
                                     is True:
                                 pawn_selected = True
+                            if isinstance(game.board[mouse_x][mouse_y], King) \
+                                    is True and \
+                                    game.board[mouse_x][mouse_y].moved is False:
+                                king_selected = True
                     if game.turn == 'b':
                         if game.board[mouse_x][mouse_y].color == 'b':
                             indicate_square_from = True
                             if isinstance(game.board[mouse_x][mouse_y], Pawn) \
                                     is True:
                                 pawn_selected = True
+                            if isinstance(game.board[mouse_x][mouse_y], King) \
+                                    is True and \
+                                    game.board[mouse_x][mouse_y].moved is False:
+                                king_selected = True
 
             # Step 3: Client window is updated with or without indicator.
             if x_copy and y_copy and x2_copy and y2_copy is None:
