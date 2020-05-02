@@ -100,6 +100,8 @@ indicate_square_to = False
 pawn_selected = False
 king_selected = False
 promotion = False
+captured_w_pieces = []
+captured_b_pieces = []
 
 # UI and display fonts live here.
 my_font = pygame.font.SysFont("arial", 30)
@@ -124,8 +126,8 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
     y2_copy -- copy of y position of square that piece is moving to
     """
     win.fill((0, 0, 0))
-    win.blit(quit_msg, (20, 20))
-    win.blit(player_msg, (302, 50))
+    win.blit(quit_msg, (100, 35))
+    win.blit(player_msg, (303, 685))
     # coor_msg used for testing purposes to locate current mouse coordinates.
     # coor_msg = my_font.render(str(mouse_x) + ", " + str(mouse_y), True,
     #                           (0, 255, 0))
@@ -166,6 +168,14 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
             if grid[i][j] != '_':
                 win.blit(grid[i][j].image, (grid_key.get(j)[0] + 3,
                                             grid_key.get(i)[0] + 3))
+    if len(captured_w_pieces) > 0:
+        for i in range(len(captured_w_pieces)):
+            pygame.draw.rect(win, (255, 255, 255), (22, i * 47 + 21, 45, 45))
+            win.blit(captured_w_pieces[i].image, (14, i * 47 + 13))
+    if len(captured_b_pieces) > 0:
+        for i in range(len(captured_b_pieces)):
+            pygame.draw.rect(win, (255, 255, 255), (672, i * 47 + 21, 45, 45))
+            win.blit(captured_b_pieces[i].image, (664, i * 47 + 13))
     game_status = my_font.render(game.state, True, (255, 0, 0))
     win.blit(game_status, (500, 50))
     pygame.display.update(win)
@@ -190,6 +200,8 @@ def main():
     global pawn_selected
     global king_selected
     global promotion
+    global captured_w_pieces
+    global captured_b_pieces
 
     # Main game loop that runs until user quits or closes client window. To
     # make it easier to follow the logic of this loop, steps are commented in
@@ -301,6 +313,13 @@ def main():
                             grid[0][7] = '_'
                             grid[0][5] = rook_image
                     king_selected = False
+
+                if grid[mouse_x2][mouse_y2] != '_':
+                    captured_image = grid[mouse_x2][mouse_y2]
+                    if game.turn == 'w':
+                        captured_w_pieces.append(captured_image)
+                    if game.turn == 'b':
+                        captured_b_pieces.append(captured_image)
 
                 piece_image = grid[mouse_x][mouse_y]
                 if promotion is True:
