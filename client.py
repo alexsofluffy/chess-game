@@ -99,6 +99,7 @@ indicate_square_from = False
 indicate_square_to = False
 pawn_selected = False
 king_selected = False
+promotion = False
 
 # UI and display fonts live here.
 my_font = pygame.font.SysFont("arial", 30)
@@ -188,6 +189,7 @@ def main():
     global indicate_square_to
     global pawn_selected
     global king_selected
+    global promotion
 
     # Main game loop that runs until user quits or closes client window. To
     # make it easier to follow the logic of this loop, steps are commented in
@@ -249,6 +251,8 @@ def main():
                 # Special rules for en-passant capturing.
                 if pawn_selected is True:
                     if game.turn == 'b':  # Meaning white pawn was moved.
+                        if mouse_x2 == 0:
+                            promotion = True
                         if mouse_x - mouse_x2 == 1:
                             if mouse_y > mouse_y2 and mouse_y - mouse_y2 == 1:
                                 if game.board[mouse_x][mouse_y2] == '_':
@@ -261,6 +265,8 @@ def main():
                                             grid[mouse_x][mouse_y2].image == b_pawn:
                                         grid[mouse_x][mouse_y2] = '_'
                     if game.turn == 'w':  # Meaning black pawn was moved.
+                        if mouse_x2 == 7:
+                            promotion = True
                         if mouse_x2 - mouse_x == 1:
                             if mouse_y > mouse_y2 and mouse_y - mouse_y2 == 1:
                                 if game.board[mouse_x][mouse_y2] == '_':
@@ -297,6 +303,13 @@ def main():
                     king_selected = False
 
                 piece_image = grid[mouse_x][mouse_y]
+                if promotion is True:
+                    if game.turn == 'b':
+                        piece_image.image = w_queen
+                        promotion = False
+                    else:
+                        piece_image.image = b_queen
+                        promotion = False
                 grid[mouse_x][mouse_y] = '_'
                 grid[mouse_x2][mouse_y2] = piece_image
                 x_copy = mouse_x

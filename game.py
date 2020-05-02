@@ -342,21 +342,5 @@ class Chess:
         self.turn_count += 1
         return True
 
-
 game = Chess()
 game.game_board.print_board()
-game.move(6, 4, 4, 4)
-game.game_board.print_board()
-game.move(1, 7, 2, 7)
-game.game_board.print_board()
-game.move(7, 5, 4, 2)
-game.game_board.print_board()
-game.move(2, 7, 3, 7)
-game.game_board.print_board()
-game.move(7, 3, 3, 7)
-game.game_board.print_board()
-game.move(0, 7, 1, 7)
-game.game_board.print_board()
-game.move(3, 7, 1, 5)
-game.game_board.print_board()
-print(game.is_in_mate('b'))
