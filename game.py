@@ -72,6 +72,7 @@ class Chess:
                                         self.board[row][col] = piece
                                         piece.row = row
                                         piece.col = col
+                                        return True
         if player == 'b':
             for row in range(8):
                 for col in range(8):
@@ -97,7 +98,7 @@ class Chess:
                                         self.board[row][col] = piece
                                         piece.row = row
                                         piece.col = col
-        return True
+                                        return True
 
     def move(self, row, col, new_row, new_col):
         """Moves specified piece to the specified location on board if valid.
@@ -338,7 +339,3 @@ class Chess:
             self.turn = 'w'
         self.turn_count += 1
         return True
-
-
-game = Chess()
-game.game_board.print_board()

@@ -124,7 +124,7 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
     """
     win.fill((0, 0, 0))
     win.blit(quit_msg, (20, 20))
-    win.blit(player_msg, (300, 50))
+    win.blit(player_msg, (302, 50))
     # coor_msg used for testing purposes to locate current mouse coordinates.
     # coor_msg = my_font.render(str(mouse_x) + ", " + str(mouse_y), True,
     #                           (0, 255, 0))
@@ -165,7 +165,8 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
             if grid[i][j] != '_':
                 win.blit(grid[i][j].image, (grid_key.get(j)[0] + 3,
                                             grid_key.get(i)[0] + 3))
-
+    game_status = my_font.render(game.state, True, (255, 0, 0))
+    win.blit(game_status, (500, 50))
     pygame.display.update(win)
 
 
