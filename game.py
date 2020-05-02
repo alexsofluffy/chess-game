@@ -55,24 +55,25 @@ class Chess:
                         for row2 in range(8):
                             for col2 in range(8):
                                 taken_piece = self.board[row2][col2]
-                                if piece.is_move_valid(row2, col2,
-                                                       self.board) is True:
-                                    self.board[row2][col2] = piece
-                                    self.board[row][col] = '_'
-                                    piece.row = row2
-                                    piece.col = col2
-                                    if self.is_in_check('w') is False:
-                                        self.board[row2][col2] = taken_piece
-                                        self.board[row][col] = piece
-                                        piece.row = row
-                                        piece.col = col
-                                        return False
-                                    else:
-                                        self.board[row2][col2] = taken_piece
-                                        self.board[row][col] = piece
-                                        piece.row = row
-                                        piece.col = col
-                                        return True
+                                if taken_piece == '_' or taken_piece.color == 'b':
+                                    if piece.is_move_valid(row2, col2,
+                                                           self.board) is True:
+                                        self.board[row2][col2] = piece
+                                        self.board[row][col] = '_'
+                                        piece.row = row2
+                                        piece.col = col2
+                                        if self.is_in_check('w') is False:
+                                            self.board[row2][col2] = taken_piece
+                                            self.board[row][col] = piece
+                                            piece.row = row
+                                            piece.col = col
+                                            return False
+                                        else:
+                                            self.board[row2][col2] = taken_piece
+                                            self.board[row][col] = piece
+                                            piece.row = row
+                                            piece.col = col
+            return True
         if player == 'b':
             for row in range(8):
                 for col in range(8):
@@ -81,24 +82,25 @@ class Chess:
                         for row2 in range(8):
                             for col2 in range(8):
                                 taken_piece = self.board[row2][col2]
-                                if piece.is_move_valid(row2, col2,
-                                                       self.board) is True:
-                                    self.board[row2][col2] = piece
-                                    self.board[row][col] = '_'
-                                    piece.row = row2
-                                    piece.col = col2
-                                    if self.is_in_check('b') is False:
-                                        self.board[row2][col2] = taken_piece
-                                        self.board[row][col] = piece
-                                        piece.row = row
-                                        piece.col = col
-                                        return False
-                                    else:
-                                        self.board[row2][col2] = taken_piece
-                                        self.board[row][col] = piece
-                                        piece.row = row
-                                        piece.col = col
-                                        return True
+                                if taken_piece == '_' or taken_piece.color == 'w':
+                                    if piece.is_move_valid(row2, col2,
+                                                           self.board) is True:
+                                        self.board[row2][col2] = piece
+                                        self.board[row][col] = '_'
+                                        piece.row = row2
+                                        piece.col = col2
+                                        if self.is_in_check('b') is False:
+                                            self.board[row2][col2] = taken_piece
+                                            self.board[row][col] = piece
+                                            piece.row = row
+                                            piece.col = col
+                                            return False
+                                        else:
+                                            self.board[row2][col2] = taken_piece
+                                            self.board[row][col] = piece
+                                            piece.row = row
+                                            piece.col = col
+            return True
 
     def move(self, row, col, new_row, new_col):
         """Moves specified piece to the specified location on board if valid.
@@ -339,3 +341,22 @@ class Chess:
             self.turn = 'w'
         self.turn_count += 1
         return True
+
+
+game = Chess()
+game.game_board.print_board()
+game.move(6, 4, 4, 4)
+game.game_board.print_board()
+game.move(1, 7, 2, 7)
+game.game_board.print_board()
+game.move(7, 5, 4, 2)
+game.game_board.print_board()
+game.move(2, 7, 3, 7)
+game.game_board.print_board()
+game.move(7, 3, 3, 7)
+game.game_board.print_board()
+game.move(0, 7, 1, 7)
+game.game_board.print_board()
+game.move(3, 7, 1, 5)
+game.game_board.print_board()
+print(game.is_in_mate('b'))
