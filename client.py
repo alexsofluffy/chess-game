@@ -4,13 +4,14 @@ from piece import Pawn, Rook, Knight, Bishop, Queen, King
 from board import Board
 
 
-# Initializes all imported Pygame modules and the display window
+# Initializes all imported Pygame modules and the display window.
 pygame.init()
+pygame.mixer.init()
 screen_width = 740
 screen_height = 740
 win = pygame.display.set_mode((screen_width, screen_height), pygame.SCALED)
 pygame.display.set_caption('Chess')
-# Loads all images stored in 'root/assets' folder
+# Loads all images stored in 'root/assets' folder.
 b_pawn = pygame.image.load('assets/b_pawn.png')
 b_rook = pygame.image.load('assets/b_rook.png')
 b_knight = pygame.image.load('assets/b_knight.png')
@@ -23,6 +24,10 @@ w_knight = pygame.image.load('assets/w_knight.png')
 w_bishop = pygame.image.load('assets/w_bishop.png')
 w_queen = pygame.image.load('assets/w_queen.png')
 w_king = pygame.image.load('assets/w_king.png')
+# Loads all sounds stored in 'root/assets/sounds' folder.
+move_sound = pygame.mixer.Sound('assets/sounds/chess_move.wav')
+check_sound = pygame.mixer.Sound('assets/sounds/in_check.wav')
+capture_sound = pygame.mixer.Sound('assets/sounds/chess_capture.wav')
 
 # Initializes a new game of chess.
 game = Chess()
@@ -102,6 +107,8 @@ king_selected = False
 promotion = False
 captured_w_pieces = []
 captured_b_pieces = []
+indicate_check_w = False
+indicate_check_b = False
 
 # UI and display fonts live here.
 my_font = pygame.font.SysFont("arial", 30)
@@ -162,12 +169,31 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
                          (grid_key.get(y2_copy)[0] - 1,
                           grid_key.get(x2_copy)[0] - 1, 70, 70))
 
+    # Draws indicator at square that king occupies indicating it is in check.
+    if indicate_square_from is False:
+        if indicate_check_w is True:
+            for i in game.board:
+                for j in i:
+                    if isinstance(j, King) is True and j.color == 'w':
+                        pygame.draw.rect(win, (255, 0, 0), (grid_key.get(j.col)[0] - 1,
+                                        grid_key.get(j.row)[0] - 1, 70, 70))
+                        break
+        if indicate_check_b is True:
+            for i in game.board:
+                for j in i:
+                    if isinstance(j, King) is True and j.color == 'b':
+                        pygame.draw.rect(win, (255, 0, 0), (grid_key.get(j.col)[0] - 1,
+                                        grid_key.get(j.row)[0] - 1, 70, 70))
+                        break
+
     # Blits all the chess images at their most current positions on chess grid.
     for i in range(8):
         for j in range(8):
             if grid[i][j] != '_':
                 win.blit(grid[i][j].image, (grid_key.get(j)[0] + 3,
                                             grid_key.get(i)[0] + 3))
+
+    # Blits images of all the captured chess pieces.
     if len(captured_w_pieces) > 0:
         for i in range(len(captured_w_pieces)):
             pygame.draw.rect(win, (255, 255, 255), (22, i * 47 + 21, 45, 45))
@@ -202,6 +228,9 @@ def main():
     global promotion
     global captured_w_pieces
     global captured_b_pieces
+    global indicate_check_w
+    global indicate_check_b
+    piece_captured = False
 
     # Main game loop that runs until user quits or closes client window. To
     # make it easier to follow the logic of this loop, steps are commented in
@@ -314,8 +343,10 @@ def main():
                             grid[0][5] = rook_image
                     king_selected = False
 
+                # If a piece has been captured displays that image to the side.
                 if grid[mouse_x2][mouse_y2] != '_':
                     captured_image = grid[mouse_x2][mouse_y2]
+                    piece_captured = True
                     if game.turn == 'w':
                         captured_w_pieces.append(captured_image)
                     if game.turn == 'b':
@@ -341,6 +372,27 @@ def main():
                 mouse_y2 = None
                 indicate_square_from = False
                 indicate_square_to = True
+                if game.is_in_check('w') is True:
+                    check_sound.play()
+                    indicate_check_w = True
+                    if piece_captured is True:
+                        piece_captured = False
+                if game.is_in_check('b') is True:
+                    check_sound.play()
+                    indicate_check_b = True
+                    if piece_captured is True:
+                        piece_captured = False
+                if game.is_in_check('w') is False and \
+                        game.is_in_check('b') is False:
+                    if piece_captured is False:
+                        move_sound.play()
+                    if piece_captured is True:
+                        capture_sound.play()
+                        piece_captured = False
+                    if indicate_check_w is True:
+                        indicate_check_w = False
+                    if indicate_check_b is True:
+                        indicate_check_b = False
                 redrawWindow(mouse_x, mouse_y, x_copy, y_copy, x2_copy,
                              y2_copy)
                 continue
