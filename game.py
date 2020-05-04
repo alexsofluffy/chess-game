@@ -55,7 +55,8 @@ class Chess:
                         for row2 in range(8):
                             for col2 in range(8):
                                 taken_piece = self.board[row2][col2]
-                                if taken_piece == '_' or taken_piece.color == 'b':
+                                if taken_piece == '_' or \
+                                        taken_piece.color == 'b':
                                     if piece.is_move_valid(row2, col2,
                                                            self.board) is True:
                                         self.board[row2][col2] = piece
@@ -82,7 +83,8 @@ class Chess:
                         for row2 in range(8):
                             for col2 in range(8):
                                 taken_piece = self.board[row2][col2]
-                                if taken_piece == '_' or taken_piece.color == 'w':
+                                if taken_piece == '_' or \
+                                        taken_piece.color == 'w':
                                     if piece.is_move_valid(row2, col2,
                                                            self.board) is True:
                                         self.board[row2][col2] = piece
@@ -90,13 +92,15 @@ class Chess:
                                         piece.row = row2
                                         piece.col = col2
                                         if self.is_in_check('b') is False:
-                                            self.board[row2][col2] = taken_piece
+                                            self.board[row2][col2] = \
+                                                taken_piece
                                             self.board[row][col] = piece
                                             piece.row = row
                                             piece.col = col
                                             return False
                                         else:
-                                            self.board[row2][col2] = taken_piece
+                                            self.board[row2][col2] = \
+                                                taken_piece
                                             self.board[row][col] = piece
                                             piece.row = row
                                             piece.col = col
@@ -288,7 +292,7 @@ class Chess:
                         rook.col = 5
             if self.is_in_check('b') is True:
                 if self.is_in_mate('b') is True:
-                    self.state = 'WHITE_WON'
+                    self.state = 'WHITE WON'
             else:
                 if self.is_in_mate('b') is True:
                     self.state = 'DRAW'
@@ -329,7 +333,7 @@ class Chess:
                         rook.col = 5
             if self.is_in_check('w') is True:
                 if self.is_in_mate('w') is True:
-                    self.state = 'BLACK_WON'
+                    self.state = 'BLACK WON'
             else:
                 if self.is_in_mate('w') is True:
                     self.state = 'DRAW'
@@ -341,6 +345,3 @@ class Chess:
             self.turn = 'w'
         self.turn_count += 1
         return True
-
-game = Chess()
-game.game_board.print_board()

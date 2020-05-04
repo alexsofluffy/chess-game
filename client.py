@@ -3,7 +3,6 @@ from game import Chess
 from piece import Pawn, Rook, Knight, Bishop, Queen, King
 from board import Board
 
-
 # Initializes all imported Pygame modules and the display window.
 pygame.init()
 pygame.mixer.init()
@@ -55,6 +54,7 @@ grid_key = {
 
 class ChessImg:
     """Represents an image of a chess piece."""
+
     def __init__(self, image):
         """Creates a new chess piece image.
 
@@ -109,6 +109,7 @@ captured_w_pieces = []
 captured_b_pieces = []
 indicate_check_w = False
 indicate_check_b = False
+game_over = False
 
 # UI and display fonts live here.
 my_font = pygame.font.SysFont("arial", 30)
@@ -175,15 +176,17 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
             for i in game.board:
                 for j in i:
                     if isinstance(j, King) is True and j.color == 'w':
-                        pygame.draw.rect(win, (255, 0, 0), (grid_key.get(j.col)[0] - 1,
-                                        grid_key.get(j.row)[0] - 1, 70, 70))
+                        pygame.draw.rect(win, (255, 0, 0),
+                                         (grid_key.get(j.col)[0] - 1,
+                                          grid_key.get(j.row)[0] - 1, 70, 70))
                         break
         if indicate_check_b is True:
             for i in game.board:
                 for j in i:
                     if isinstance(j, King) is True and j.color == 'b':
-                        pygame.draw.rect(win, (255, 0, 0), (grid_key.get(j.col)[0] - 1,
-                                        grid_key.get(j.row)[0] - 1, 70, 70))
+                        pygame.draw.rect(win, (255, 0, 0),
+                                         (grid_key.get(j.col)[0] - 1,
+                                          grid_key.get(j.row)[0] - 1, 70, 70))
                         break
 
     # Blits all the chess images at their most current positions on chess grid.
@@ -202,8 +205,9 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
         for i in range(len(captured_b_pieces)):
             pygame.draw.rect(win, (255, 255, 255), (672, i * 47 + 21, 45, 45))
             win.blit(captured_b_pieces[i].image, (664, i * 47 + 13))
-    game_status = my_font.render(game.state, True, (255, 0, 0))
-    win.blit(game_status, (500, 50))
+    if game_over is True:
+        game_status = my_font.render(game.state, True, (255, 0, 0))
+        win.blit(game_status, (510, 35))
     pygame.display.update(win)
 
 
@@ -230,6 +234,7 @@ def main():
     global captured_b_pieces
     global indicate_check_w
     global indicate_check_b
+    global game_over
     piece_captured = False
 
     # Main game loop that runs until user quits or closes client window. To
@@ -252,7 +257,8 @@ def main():
                 # variables reset and loop starts over at step 1.
                 if indicate_square_from is True:
                     mouse_pos2 = pygame.mouse.get_pos()
-                    if 90 <= mouse_pos2[0] <= 650 and 90 <= mouse_pos2[1] <= 650:
+                    if 90 <= mouse_pos2[0] <= 650 and 90 <= mouse_pos2[
+                        1] <= 650:
                         for key, value in grid_key.items():
                             if value[0] <= mouse_pos2[1] <= value[1]:
                                 mouse_x2 = key
@@ -298,12 +304,14 @@ def main():
                             if mouse_y > mouse_y2 and mouse_y - mouse_y2 == 1:
                                 if game.board[mouse_x][mouse_y2] == '_':
                                     if grid[mouse_x][mouse_y2] != '_' and \
-                                            grid[mouse_x][mouse_y2].image == b_pawn:
+                                            grid[mouse_x][
+                                                mouse_y2].image == b_pawn:
                                         grid[mouse_x][mouse_y2] = '_'
                             if mouse_y < mouse_y2 and mouse_y2 - mouse_y == 1:
                                 if game.board[mouse_x][mouse_y2] == '_':
                                     if grid[mouse_x][mouse_y2] != '_' and \
-                                            grid[mouse_x][mouse_y2].image == b_pawn:
+                                            grid[mouse_x][
+                                                mouse_y2].image == b_pawn:
                                         grid[mouse_x][mouse_y2] = '_'
                     if game.turn == 'w':  # Meaning black pawn was moved.
                         if mouse_x2 == 7:
@@ -312,12 +320,14 @@ def main():
                             if mouse_y > mouse_y2 and mouse_y - mouse_y2 == 1:
                                 if game.board[mouse_x][mouse_y2] == '_':
                                     if grid[mouse_x][mouse_y2] != '_' and \
-                                            grid[mouse_x][mouse_y2].image == w_pawn:
+                                            grid[mouse_x][
+                                                mouse_y2].image == w_pawn:
                                         grid[mouse_x][mouse_y2] = '_'
                             if mouse_y < mouse_y2 and mouse_y2 - mouse_y == 1:
                                 if game.board[mouse_x][mouse_y2] == '_':
                                     if grid[mouse_x][mouse_y2] != '_' and \
-                                            grid[mouse_x][mouse_y2].image == w_pawn:
+                                            grid[mouse_x][
+                                                mouse_y2].image == w_pawn:
                                         grid[mouse_x][mouse_y2] = '_'
                     pawn_selected = False
 
@@ -393,6 +403,8 @@ def main():
                         indicate_check_w = False
                     if indicate_check_b is True:
                         indicate_check_b = False
+                if game.state != 'UNFINISHED':
+                    game_over = True
                 redrawWindow(mouse_x, mouse_y, x_copy, y_copy, x2_copy,
                              y2_copy)
                 continue
@@ -421,7 +433,8 @@ def main():
                                 pawn_selected = True
                             if isinstance(game.board[mouse_x][mouse_y], King) \
                                     is True and \
-                                    game.board[mouse_x][mouse_y].moved is False:
+                                    game.board[mouse_x][
+                                        mouse_y].moved is False:
                                 king_selected = True
                     if game.turn == 'b':
                         if game.board[mouse_x][mouse_y].color == 'b':
@@ -431,7 +444,8 @@ def main():
                                 pawn_selected = True
                             if isinstance(game.board[mouse_x][mouse_y], King) \
                                     is True and \
-                                    game.board[mouse_x][mouse_y].moved is False:
+                                    game.board[mouse_x][
+                                        mouse_y].moved is False:
                                 king_selected = True
 
             # Step 3: Client window is updated with or without indicator.
