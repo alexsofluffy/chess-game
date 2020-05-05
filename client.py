@@ -1,7 +1,6 @@
 import pygame
 from game import Chess
-from piece import Pawn, Rook, Knight, Bishop, Queen, King
-from board import Board
+from piece import Pawn, King
 
 # Initializes all imported Pygame modules and the display window.
 pygame.init()
@@ -119,6 +118,9 @@ opponent_color = "black"
 player_msg = my_font.render("You are {color}".format(color=player_color),
                             True, (255, 0, 0))
 
+# Networking-related variables live here.
+clientNumber = 0
+
 
 def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
                  x2_copy=None, y2_copy=None):
@@ -196,7 +198,7 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
                 win.blit(grid[i][j].image, (grid_key.get(j)[0] + 3,
                                             grid_key.get(i)[0] + 3))
 
-    # Blits images of all the captured chess pieces.
+    # Blits images of all captured chess pieces.
     if len(captured_w_pieces) > 0:
         for i in range(len(captured_w_pieces)):
             pygame.draw.rect(win, (255, 255, 255), (22, i * 47 + 21, 45, 45))

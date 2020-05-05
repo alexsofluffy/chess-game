@@ -63,14 +63,25 @@ class Chess:
                                         self.board[row][col] = '_'
                                         piece.row = row2
                                         piece.col = col2
+                                        if isinstance(piece, King) is True and\
+                                                piece.moved is False:
+                                            if (row2 == 7 and col2 == 2) or \
+                                                    (row2 == 7 and col2 == 6):
+                                                self.board[row2][col2] = \
+                                                    taken_piece
+                                                self.board[row][col] = piece
+                                                piece.row = row
+                                                piece.col = col
                                         if self.is_in_check('w') is False:
-                                            self.board[row2][col2] = taken_piece
+                                            self.board[row2][col2] = \
+                                                taken_piece
                                             self.board[row][col] = piece
                                             piece.row = row
                                             piece.col = col
                                             return False
                                         else:
-                                            self.board[row2][col2] = taken_piece
+                                            self.board[row2][col2] = \
+                                                taken_piece
                                             self.board[row][col] = piece
                                             piece.row = row
                                             piece.col = col
@@ -91,6 +102,15 @@ class Chess:
                                         self.board[row][col] = '_'
                                         piece.row = row2
                                         piece.col = col2
+                                        if isinstance(piece, King) is True and\
+                                                piece.moved is False:
+                                            if (row2 == 0 and col2 == 2) or \
+                                                    (row2 == 0 and col2 == 6):
+                                                self.board[row2][col2] = \
+                                                    taken_piece
+                                                self.board[row][col] = piece
+                                                piece.row = row
+                                                piece.col = col
                                         if self.is_in_check('b') is False:
                                             self.board[row2][col2] = \
                                                 taken_piece
@@ -345,3 +365,7 @@ class Chess:
             self.turn = 'w'
         self.turn_count += 1
         return True
+
+
+game = Chess()
+game.game_board.print_board()
