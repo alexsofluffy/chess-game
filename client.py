@@ -26,6 +26,7 @@ w_king = pygame.image.load('assets/w_king.png')
 move_sound = pygame.mixer.Sound('assets/sounds/chess_move.wav')
 check_sound = pygame.mixer.Sound('assets/sounds/in_check.wav')
 capture_sound = pygame.mixer.Sound('assets/sounds/chess_capture.wav')
+mate_sound = pygame.mixer.Sound('assets/sounds/mate.wav')
 
 # Initializes a new game of chess.
 game = Chess()
@@ -111,12 +112,9 @@ indicate_check_b = False
 game_over = False
 
 # UI and display fonts live here.
-my_font = pygame.font.SysFont("arial", 30)
-quit_msg = my_font.render("Press q to quit", True, (255, 255, 255))
-player_color = "white"
-opponent_color = "black"
-player_msg = my_font.render("You are {color}".format(color=player_color),
-                            True, (255, 0, 0))
+main_font = pygame.font.SysFont("arial", 30)
+game_over_font = pygame.font.SysFont("arial", 50)
+quit_msg = main_font.render("Press q to quit", True, (255, 255, 255))
 
 # Networking-related variables live here.
 clientNumber = 0
@@ -137,11 +135,6 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
     """
     win.fill((0, 0, 0))
     win.blit(quit_msg, (100, 35))
-    win.blit(player_msg, (303, 685))
-    # coor_msg used for testing purposes to locate current mouse coordinates.
-    # coor_msg = my_font.render(str(mouse_x) + ", " + str(mouse_y), True,
-    #                           (0, 255, 0))
-    # win.blit(coor_msg, (600, 50))
 
     # Draws all the squares on the chess grid.
     for i in range(8):
@@ -191,14 +184,14 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
                                           grid_key.get(j.row)[0] - 1, 70, 70))
                         break
 
-    # Blits all the chess images at their most current positions on chess grid.
+    # Blit all the chess images at their most current positions on chess grid.
     for i in range(8):
         for j in range(8):
             if grid[i][j] != '_':
                 win.blit(grid[i][j].image, (grid_key.get(j)[0] + 3,
                                             grid_key.get(i)[0] + 3))
 
-    # Blits images of all captured chess pieces.
+    # Blit images of all captured chess pieces.
     if len(captured_w_pieces) > 0:
         for i in range(len(captured_w_pieces)):
             pygame.draw.rect(win, (255, 255, 255), (22, i * 47 + 21, 45, 45))
@@ -208,8 +201,8 @@ def redrawWindow(mouse_x=None, mouse_y=None, x_copy=None, y_copy=None,
             pygame.draw.rect(win, (255, 255, 255), (672, i * 47 + 21, 45, 45))
             win.blit(captured_b_pieces[i].image, (664, i * 47 + 13))
     if game_over is True:
-        game_status = my_font.render(game.state, True, (255, 0, 0))
-        win.blit(game_status, (510, 35))
+        game_status = game_over_font.render(game.state, True, (255, 0, 0))
+        win.blit(game_status, (263, 355))
     pygame.display.update(win)
 
 
@@ -247,10 +240,12 @@ def main():
             # Ends program if user closes client window.
             if event.type == pygame.QUIT:
                 pygame.quit()
+                quit()
             if event.type == pygame.KEYDOWN:
                 # Ends program if user clicks 'q' key to quit.
                 if event.key == pygame.K_q:
                     pygame.quit()
+                    quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Step 4: If indicator is being displayed, that means a valid
                 # piece to move has been selected. Afterwards, program stores
@@ -259,8 +254,8 @@ def main():
                 # variables reset and loop starts over at step 1.
                 if indicate_square_from is True:
                     mouse_pos2 = pygame.mouse.get_pos()
-                    if 90 <= mouse_pos2[0] <= 650 and 90 <= mouse_pos2[
-                        1] <= 650:
+                    if 90 <= mouse_pos2[0] <= 650 and \
+                            90 <= mouse_pos2[1] <= 650:
                         for key, value in grid_key.items():
                             if value[0] <= mouse_pos2[1] <= value[1]:
                                 mouse_x2 = key
@@ -277,8 +272,7 @@ def main():
                         continue
                 else:
                     # Step 1: Updates x and y coordinates of mouse if a square
-                    # on grid is clicked. Else, does nothing and display is
-                    # refreshed.
+                    # on grid is clicked. Else, display simply refreshes.
                     mouse_pos = pygame.mouse.get_pos()
                     if 90 <= mouse_pos[0] <= 650 and 90 <= mouse_pos[1] <= 650:
                         for key, value in grid_key.items():
@@ -290,14 +284,14 @@ def main():
                         mouse_x = None
                         mouse_y = None
 
-        # Step 5: With a second set of mouse coordinates, program determines if
-        # a move is valid. If so, piece is moved on chess board as well as the
+        # Step 5: With second set of mouse coordinates, program determines if
+        # move is valid. If so, piece is moved on chess board as well as the
         # corresponding piece image on the chess grid. If move invalid, resets
         # all variables and loop starts over at step 1.
         if mouse_x2 is not None and mouse_y2 is not None:
             if game.move(mouse_x, mouse_y, mouse_x2, mouse_y2) is True:
 
-                # Special rules for en-passant capturing.
+                # Special rules for en passant capturing.
                 if pawn_selected is True:
                     if game.turn == 'b':  # Meaning white pawn was moved.
                         if mouse_x2 == 0:
@@ -365,6 +359,7 @@ def main():
                         captured_b_pieces.append(captured_image)
 
                 piece_image = grid[mouse_x][mouse_y]
+                # Special rules for pawn promotion.
                 if promotion is True:
                     if game.turn == 'b':
                         piece_image.image = w_queen
@@ -384,13 +379,21 @@ def main():
                 mouse_y2 = None
                 indicate_square_from = False
                 indicate_square_to = True
+
+                # Special rules for sound effects.
                 if game.is_in_check('w') is True:
-                    check_sound.play()
+                    if game.state != 'UNFINISHED':
+                        mate_sound.play()
+                    else:
+                        check_sound.play()
                     indicate_check_w = True
                     if piece_captured is True:
                         piece_captured = False
                 if game.is_in_check('b') is True:
-                    check_sound.play()
+                    if game.state != 'UNFINISHED':
+                        mate_sound.play()
+                    else:
+                        check_sound.play()
                     indicate_check_b = True
                     if piece_captured is True:
                         piece_captured = False
@@ -405,6 +408,7 @@ def main():
                         indicate_check_w = False
                     if indicate_check_b is True:
                         indicate_check_b = False
+
                 if game.state != 'UNFINISHED':
                     game_over = True
                 redrawWindow(mouse_x, mouse_y, x_copy, y_copy, x2_copy,
@@ -420,11 +424,11 @@ def main():
                     pawn_selected = False
                 continue
         else:
-            # Step 2: If square selected contains a chess piece of the same
-            # color as the player whose turn it is, window is updated with
-            # indicator appears showing the piece that is selected. If square
-            # is empty or player attempts to select a piece of a different
-            # color, no indicator appears.
+            # Step 2: If square selected contains chess piece of the same color
+            # as the player whose turn it is, window is updated with indicator
+            # showing the piece that is selected. If square is empty or player
+            # attempts to select a piece of a different color, no indicator
+            # appears.
             if mouse_x is not None and mouse_y is not None:
                 if game.board[mouse_x][mouse_y] != '_':
                     if game.turn == 'w':

@@ -19,19 +19,28 @@ print("Waiting for a connection, server started")
 
 
 def threaded_client(conn):
+    """Creates a new threaded process for each connection to socket.
+
+    Keyword arguments:
+    conn -- connection object
+    """
+    conn.send(str.encoude("Connected"))
     reply = ""
     while True:
         try:
-            data = conn.recv(2048)
-            reply = data.decode("utf-8")
+            data = conn.recv(2048)  # Specifies size of data received in bits.
+            reply = data.decode("utf-8")  # Decodes data in specified format.
 
             if not data:
+                # Breaks connection once data is no longer received.
                 print("Disconnected")
                 break
             else:
+                # Prints decoded data out.
                 print("Received: ", reply)
                 print("Sending: ", reply)
 
+            # Sends back encoded data to threaded client.
             conn.sendall(str.encode(reply))
         except:
             break

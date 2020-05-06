@@ -315,7 +315,7 @@ class Chess:
                     self.state = 'WHITE WON'
             else:
                 if self.is_in_mate('b') is True:
-                    self.state = 'DRAW'
+                    self.state = 'STALEMATE'
         if self.turn == 'b':
             if self.is_in_check('b') is True:
                 self.board[new_row][new_col] = taken_piece
@@ -356,7 +356,7 @@ class Chess:
                     self.state = 'BLACK WON'
             else:
                 if self.is_in_mate('w') is True:
-                    self.state = 'DRAW'
+                    self.state = 'STALEMATE'
 
         # Updates the turn tracker.
         if self.turn == 'w':
@@ -365,7 +365,3 @@ class Chess:
             self.turn = 'w'
         self.turn_count += 1
         return True
-
-
-game = Chess()
-game.game_board.print_board()
