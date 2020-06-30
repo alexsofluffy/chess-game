@@ -1,4 +1,4 @@
-# Chess
+# Simply Chess
 A simple chess game you can play with a friend. Supports local play on one
 computer or online play against opponents on different machines and/or
 networks. The chess logic was coded in Python 3.8, the UI with Pygame 
