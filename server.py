@@ -1,21 +1,16 @@
 import socket
 from _thread import *
-import sys
 
 server = "10.0.0.52"  # The local IP address of your machine.
 port = 55555  # Can be any unused port.
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Initialize new socket.
-
-# Binds the server (IP address) to the port thus creating a new socket.
-try:
-    s.bind((server, port))
-except socket.error as e:
-    str(e)
+# Creates a new socket by binding the server (IP address) to the port.
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((server, port))
 
 # Enables the socket to wait and accept the specified number of connections.
 s.listen(2)
-print("Waiting for a connection, server started")
+print("Server started, waiting for connection...")
 
 
 def threaded_client(conn):
@@ -24,7 +19,7 @@ def threaded_client(conn):
     Keyword arguments:
     conn -- connection object
     """
-    conn.send(str.encoude("Connected"))
+    conn.send(str.encode("Connected to server"))
     reply = ""
     while True:
         try:
@@ -50,7 +45,9 @@ def threaded_client(conn):
     conn.close()
 
 
+# Continuously stores incoming connections and IP addresses, prints addresses
+# connected to socket, and starts new threaded client for each connection.
 while True:
-    conn, addr = s.accept()  # Stores incoming connections and IP addresses.
-    print("Connected to: ", addr)  # Prints addresses connected to socket.
+    conn, addr = s.accept()
+    print("Connected to:", addr)
     start_new_thread(threaded_client, (conn,))

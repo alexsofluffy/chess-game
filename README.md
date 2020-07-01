@@ -19,4 +19,4 @@ please email me at alalex616@gmail.com if you find a bug and I'll do my best to
 fix it!
 
 # License
-My code cannot be used for commercial use without permission.
+My code cannot be used for commercial purposes without permission.
