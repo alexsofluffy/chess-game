@@ -6,9 +6,11 @@ class Network:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server = "10.0.0.52"
         self.port = 55555
-        self.addr = (self.server, self.port)
-        self.id = self.connect()
-        print(self.id)
+        self.addr = (self. server, self.port)
+        self.pos = self.connect()
+
+    def getPos(self):
+        return self.pos
 
     def connect(self):
         try:
@@ -24,6 +26,5 @@ class Network:
         except socket.error as e:
             print(e)
 
-
 n = Network()
-print(n.send("Hello"))
+n.send("Hi")
