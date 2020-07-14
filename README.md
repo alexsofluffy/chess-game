@@ -1,8 +1,6 @@
-# Simply Multi-player Chess
-A simple chess game you can play with a friend. Supports local play on one
-computer or online play against opponents on different machines and/or
-networks. The chess logic was coded in Python 3.8, the UI with Pygame 
-2.0.0.dev6, and networking with Python's socket interface.
+# Simply Chess
+A simple chess game you can play with a friend. The chess logic was coded in 
+Python 3.8 and the UI with Pygame 2.0.0.dev6.
 
 # Features
 Supports all major special rules in chess, such as Promotion, En passant, 
@@ -10,8 +8,7 @@ Castling and Stalemates.
 
 # Requirements
 To run this game, you need Python 3.x and the Pygame plugin installed.
-After downloading repository, simply run client.py for local play or server.py
-for online play.
+After downloading repository, simply run 'client.py'.
 
 # Known Bugs
 Code has been tested extensively so there should be nothing game breaking, but
