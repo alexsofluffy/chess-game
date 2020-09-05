@@ -1,4 +1,5 @@
 # Simply Chess
+![](chess.gif)<br>
 A simple chess game you can play with a friend. The chess logic was coded in 
 Python 3.8 and the UI with Pygame 2.0.0.dev6.
 
